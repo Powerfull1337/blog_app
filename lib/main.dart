@@ -1,5 +1,6 @@
 import 'package:blog_app/core/theme/app_theme.dart';
-import 'package:blog_app/home_page.dart';
+//import 'package:blog_app/presentation/auth/register_page.dart';
+import 'package:blog_app/presentation/home_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
