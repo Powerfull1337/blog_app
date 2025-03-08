@@ -3,17 +3,18 @@ import 'package:blog_app/core/utils/topics.dart';
 import 'package:flutter/material.dart';
 
 class BlogCard extends StatelessWidget {
-  const BlogCard({super.key});
+  const BlogCard({super.key, required this.color});
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       height: 200,
       width: double.infinity,
-      decoration: BoxDecoration(
-          color: AppColors.gradient2, borderRadius: BorderRadius.circular(12)),
+      decoration:
+          BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           const Text(
@@ -35,10 +36,14 @@ class BlogCard extends StatelessWidget {
           ),
           const Spacer(),
           const Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "1 min",
+                style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
+              ),
+              Text(
+                "by Denys",
                 style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
               )
             ],
