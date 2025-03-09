@@ -1,12 +1,12 @@
 import 'package:blog_app/core/utils/navigation_service.dart';
-import 'package:blog_app/presentation/auth/register_page.dart';
+import 'package:blog_app/presentation/pages/auth/login_page.dart';
 import 'package:blog_app/presentation/widgets/auth_button.dart';
 import 'package:blog_app/presentation/widgets/auth_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class LoginPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              "Sign In",
+              "Sign Up",
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 25),
@@ -29,28 +29,31 @@ class LoginPage extends StatelessWidget {
             ),
             const SizedBox(height: 25),
             const AuthField(
+              hintText: "Username",
+            ),
+            const SizedBox(height: 25),
+            const AuthField(
               hintText: "Password",
             ),
             const SizedBox(height: 35),
             const AuthButton(
-              text: "Sign In",
+              text: "Sign Up",
             ),
             const SizedBox(height: 25),
             RichText(
               text: TextSpan(
-                text: "Dont have an account? ",
+                text: "Already have an account? ",
                 style: const TextStyle(color: Colors.white, fontSize: 16),
                 children: [
                   TextSpan(
-                    text: "  Sign up",
+                    text: "  Log in",
                     style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
                     ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        NavigationService.pushAndRemoveUntil(
-                            context, const RegisterPage());
+                        NavigationService.push(context, const LoginPage());
                       },
                   ),
                 ],

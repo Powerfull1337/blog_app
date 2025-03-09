@@ -1,6 +1,6 @@
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/navigation_service.dart';
-import 'package:blog_app/presentation/blog/add_blog_page.dart';
+import 'package:blog_app/presentation/pages/blog/add_blog_page.dart';
 import 'package:blog_app/presentation/widgets/blog_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

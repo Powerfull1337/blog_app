@@ -1,6 +1,6 @@
 import 'package:blog_app/core/theme/app_theme.dart';
 //import 'package:blog_app/presentation/auth/register_page.dart';
-import 'package:blog_app/presentation/blog/blog_page.dart';
+import 'package:blog_app/presentation/pages/blog/blog_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
