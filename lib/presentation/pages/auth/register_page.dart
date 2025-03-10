@@ -1,15 +1,26 @@
 import 'package:blog_app/core/utils/navigation_service.dart';
+import 'package:blog_app/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/presentation/pages/auth/login_page.dart';
 import 'package:blog_app/presentation/widgets/auth_button.dart';
 import 'package:blog_app/presentation/widgets/auth_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  @override
   Widget build(BuildContext context) {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final nameController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -24,20 +35,32 @@ class RegisterPage extends StatelessWidget {
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 25),
-            const AuthField(
+            AuthField(
               hintText: "Email",
+              controller: emailController,
             ),
             const SizedBox(height: 25),
-            const AuthField(
+            AuthField(
               hintText: "Username",
+              controller: nameController,
             ),
             const SizedBox(height: 25),
-            const AuthField(
+            AuthField(
               hintText: "Password",
+              controller: passwordController,
             ),
             const SizedBox(height: 35),
-            const AuthButton(
+            AuthButton(
               text: "Sign Up",
+              onTap: () {
+                context.read<AuthBloc>().add(
+                      AuthSignUp(
+                        email: emailController.text.trim(),
+                        password: passwordController.text.trim(),
+                        name: nameController.text.trim(),
+                      ),
+                    );
+              },
             ),
             const SizedBox(height: 25),
             RichText(

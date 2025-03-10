@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:blog_app/core/errors/exceptions.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -16,7 +18,7 @@ abstract interface class AuthRemoteDataSource {
 class AuthRemoteDataSourceImplementation implements AuthRemoteDataSource {
   final SupabaseClient supabaseClient;
 
-  AuthRemoteDataSourceImplementation({required this.supabaseClient});
+  AuthRemoteDataSourceImplementation( this.supabaseClient);
 
   @override
   Future<String> loginWithEmailPassword(
@@ -39,6 +41,7 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDataSource {
       }
       return response.user!.id;
     } catch (e) {
+      log(e.toString());
       throw ServerException(e.toString());
     }
   }

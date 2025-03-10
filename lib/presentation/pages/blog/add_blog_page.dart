@@ -13,7 +13,7 @@ class AddBlogPage extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(12),
             width: double.infinity,
-            height: 100,
+            height: 200,
             decoration: DottedDecoration(),
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
