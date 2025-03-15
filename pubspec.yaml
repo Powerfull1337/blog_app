@@ -36,7 +36,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   top_snackbar_flutter: ^3.2.0
-  dotted_decoration: ^2.0.0
+  dotted_border: ^2.1.0
   fpdart: ^1.1.1
   supabase_flutter: ^2.8.4
   flutter_bloc: ^9.1.0

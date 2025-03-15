@@ -1,4 +1,4 @@
-import 'package:dotted_decoration/dotted_decoration.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 
 class AddBlogPage extends StatelessWidget {
@@ -8,19 +8,29 @@ class AddBlogPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(12),
-            width: double.infinity,
-            height: 200,
-            decoration: DottedDecoration(),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text("Pick Image"), Icon(Icons.camera)],
-            ),
-          )
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            DottedBorder(
+              child: const SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.folder_open,
+                      size: 32,
+                    ),
+                    SizedBox(height: 20),
+                    Text("Pick image")
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 ThemeData darkThemeData = ThemeData(
+  iconTheme: const IconThemeData(color: AppColors.whiteColor),
   inputDecorationTheme: const InputDecorationTheme(
     hintStyle: TextStyle(color: AppColors.whiteGrey),
     fillColor: AppColors.darkBrown,
