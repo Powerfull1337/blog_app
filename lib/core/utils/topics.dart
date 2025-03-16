@@ -1,1 +1,8 @@
-List<String> lisofTopics = ["Anime", "Techonology", "Sport", "Game"];
+List<String> listOfTopics = [
+  "Anime",
+  "Techonology",
+  "Sport",
+  "Game",
+  "Politics",
+  "Films & Serials"
+];

@@ -24,7 +24,7 @@ class BlogCard extends StatelessWidget {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: lisofTopics
+              children: listOfTopics
                   .map(
                     (e) => Padding(
                       padding: const EdgeInsets.all(5.0),

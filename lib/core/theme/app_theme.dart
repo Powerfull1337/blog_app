@@ -4,17 +4,34 @@ import 'package:flutter/material.dart';
 ThemeData darkThemeData = ThemeData(
   iconTheme: const IconThemeData(color: AppColors.whiteColor),
   inputDecorationTheme: const InputDecorationTheme(
-    hintStyle: TextStyle(color: AppColors.whiteGrey),
+    hintStyle: TextStyle(color: AppColors.whiteGrey, fontSize: 18),
     fillColor: AppColors.darkBrown,
     filled: true,
-    border: InputBorder.none,
-    enabledBorder: InputBorder.none,
-    focusedBorder: InputBorder.none,
-    disabledBorder: InputBorder.none,
+    border: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: AppColors.borderColor,
+        width: 3,
+      ),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: AppColors.borderColor,
+        width: 3,
+      ),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: AppColors.gradient1,
+        width: 3,
+      ),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    ),
   ),
   chipTheme: const ChipThemeData(
-      backgroundColor: AppColors.darkBrown,
-      labelStyle: TextStyle(color: AppColors.whiteColor)),
+    backgroundColor: AppColors.darkBrown,
+    labelStyle: TextStyle(color: AppColors.whiteColor),
+  ),
   iconButtonTheme: IconButtonThemeData(
     style: ButtonStyle(
       iconSize: WidgetStateProperty.all(28),
@@ -23,8 +40,9 @@ ThemeData darkThemeData = ThemeData(
   ),
   scaffoldBackgroundColor: AppColors.backgroundColor,
   appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.backgroundColor,
-      foregroundColor: AppColors.whiteColor),
+    backgroundColor: AppColors.backgroundColor,
+    foregroundColor: AppColors.whiteColor,
+  ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppColors.whiteColor),
     bodyMedium: TextStyle(color: AppColors.whiteColor),
