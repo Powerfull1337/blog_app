@@ -1,10 +1,19 @@
 import 'package:blog_app/core/theme/app_colors.dart';
-import 'package:blog_app/core/utils/topics.dart';
 import 'package:flutter/material.dart';
 
 class BlogCard extends StatelessWidget {
-  const BlogCard({super.key, required this.color});
   final Color color;
+  final String title;
+  final String posterName;
+  final String readingTime;
+  final List<String> topics;
+
+  const BlogCard(
+      {super.key,
+      required this.color,
+      required this.title,
+      required this.topics,
+      required this.posterName, required this.readingTime});
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +26,14 @@ class BlogCard extends StatelessWidget {
           BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
-          const Text(
-            "New games in 2025",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: listOfTopics
+              children: topics
                   .map(
                     (e) => Padding(
                       padding: const EdgeInsets.all(5.0),
@@ -35,16 +44,17 @@ class BlogCard extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "1 min",
+               Text(
+                readingTime,
                 style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
               ),
               Text(
-                "by Denys",
-                style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
+                posterName,
+                style:
+                    const TextStyle(color: AppColors.whiteColor, fontSize: 16),
               )
             ],
           )
