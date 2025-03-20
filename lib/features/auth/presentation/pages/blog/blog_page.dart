@@ -3,6 +3,7 @@ import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/reading_time.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/features/auth/presentation/pages/blog/add_blog_page.dart';
+import 'package:blog_app/features/auth/presentation/pages/blog/details_blog_page.dart';
 import 'package:blog_app/features/auth/presentation/widgets/blog_card.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
@@ -53,6 +54,9 @@ class _BlogPageState extends State<BlogPage> {
                   itemBuilder: (context, index) {
                     final blog = state.blogs[index];
                     return BlogCard(
+                      onTap: (){
+                        NavigationService.push(context, DetailsBlogPage(blog: blog));
+                      },
                       color: index % 2 == 0
                           ? AppColors.gradient1
                           : AppColors.gradient3,

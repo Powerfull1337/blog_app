@@ -7,58 +7,66 @@ class BlogCard extends StatelessWidget {
   final String posterName;
   final String readingTime;
   final List<String> topics;
+  final Function()? onTap;
 
   const BlogCard(
       {super.key,
       required this.color,
       required this.title,
       required this.topics,
-      required this.posterName, required this.readingTime});
+      required this.posterName,
+      required this.readingTime,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      height: 200,
-      width: double.infinity,
-      decoration:
-          BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: topics
-                  .map(
-                    (e) => Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Chip(label: Text(e)),
-                    ),
-                  )
-                  .toList(),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        height: 200,
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: color, borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-          ),
-          const Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-               Text(
-                readingTime,
-                style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: topics
+                    .map(
+                      (e) => Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Chip(label: Text(e)),
+                      ),
+                    )
+                    .toList(),
               ),
-              Text(
-                posterName,
-                style:
-                    const TextStyle(color: AppColors.whiteColor, fontSize: 16),
-              )
-            ],
-          )
-        ],
+            ),
+            const Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "$readingTime min",
+                  style: const TextStyle(
+                      color: AppColors.whiteColor, fontSize: 16),
+                ),
+                Text(
+                  "By $posterName",
+                  style: const TextStyle(
+                      color: AppColors.whiteColor, fontSize: 16),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
