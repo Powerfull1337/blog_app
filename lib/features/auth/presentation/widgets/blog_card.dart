@@ -59,7 +59,7 @@ class BlogCard extends StatelessWidget {
                       color: AppColors.whiteColor, fontSize: 16),
                 ),
                 Text(
-                  "By $posterName",
+                  "Posted by $posterName",
                   style: const TextStyle(
                       color: AppColors.whiteColor, fontSize: 16),
                 )
