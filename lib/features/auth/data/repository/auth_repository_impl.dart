@@ -1,3 +1,4 @@
+import 'package:blog_app/core/constants/message_constants.dart';
 import 'package:blog_app/core/errors/exceptions.dart';
 import 'package:blog_app/core/errors/failures.dart';
 import 'package:blog_app/core/network/connection_checker.dart';
@@ -23,7 +24,7 @@ class AuthRepositoryImplementation implements AuthRepository {
         final session = remoteDataSource.currentUserSession;
 
         if (session == null) {
-          return left(Failure('User not logged in!'));
+          return left(Failure(MessageConstants.userNotLoggedIn));
         }
 
         return right(
@@ -36,7 +37,7 @@ class AuthRepositoryImplementation implements AuthRepository {
       }
       final user = await remoteDataSource.getCurrentUserData();
       if (user == null) {
-        return left(Failure('User not logged in!'));
+        return left(Failure(MessageConstants.userNotLoggedIn));
       }
 
       return right(user);
@@ -78,7 +79,7 @@ class AuthRepositoryImplementation implements AuthRepository {
   ) async {
     try {
       if (!await (connectionChecker.isConnected)) {
-        return left(Failure("No interner connection"));
+        return left(Failure(MessageConstants.noInternetConnection));
       }
       final user = await fn();
 

@@ -30,19 +30,21 @@ Future<void> initDependencies() async {
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_KEY']!,
   );
+
   serviceLocator.registerFactory(() => InternetConnection());
   serviceLocator.registerLazySingleton(() => supabase.client);
-  serviceLocator.registerLazySingleton(() => Database);
 
-  // Register core dependencies
-  serviceLocator.registerLazySingleton(() => AppUserCubit());
-  serviceLocator.registerFactory<ConnectionChecker>(
-    () => ConnectionCheckerImpl(
-      serviceLocator(),
-    ),
+  serviceLocator.registerSingletonAsync<Database>(
+    () async => await initDB(),
   );
 
-  // Initialize modules
+  await serviceLocator.isReady<Database>();
+
+  serviceLocator.registerLazySingleton(() => AppUserCubit());
+  serviceLocator.registerFactory<ConnectionChecker>(
+    () => ConnectionCheckerImpl(serviceLocator()),
+  );
+
   _initAuth();
   _initBlog();
 }
@@ -76,10 +78,9 @@ void _initBlog() {
     )
     ..registerFactory<BlogLocalDataSource>(
       () => BlogLocalDataSourceImpl(
-        serviceLocator(),
+        serviceLocator<Database>(),
       ),
     )
-
     // Repository
     ..registerFactory<BlogRepository>(
       () => BlogRepositoryImpl(

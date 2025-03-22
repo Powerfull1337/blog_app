@@ -22,7 +22,7 @@ class BlogLocalDataSourceImpl implements BlogLocalDataSource {
     for (final blog in blogs) {
       await database.insert(
         'blogs',
-        blog.toJson(),
+        blog.toLocalJson(), 
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
@@ -32,7 +32,9 @@ class BlogLocalDataSourceImpl implements BlogLocalDataSource {
   Future<List<BlogModel>> loadBlogs() async {
     final result = await database.query('blogs');
 
-    return result.map((json) => BlogModel.fromJson(json)).toList();
+    return result
+        .map((json) => BlogModel.fromLocalJson(json)) 
+        .toList();
   }
 }
 
@@ -47,13 +49,13 @@ Future<Database> initDB() async {
       await db.execute('''
         CREATE TABLE blogs (
           id TEXT PRIMARY KEY,
-          posterId TEXT NOT NULL,
+          poster_id TEXT NOT NULL,
           title TEXT NOT NULL,
           content TEXT NOT NULL,
-          imageUrl TEXT NOT NULL,
-          topics TEXT NOT NULL, -- зберігаємо список як рядок через кому
-          updatedAt TEXT NOT NULL,
-          posterName TEXT
+          image_url TEXT NOT NULL,
+          topics TEXT NOT NULL, 
+          updated_at TEXT NOT NULL,
+          poster_name TEXT
         )
       ''');
     },
