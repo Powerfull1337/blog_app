@@ -15,6 +15,11 @@ import 'package:blog_app/features/blog/domain/repositories/blog_repository.dart'
 import 'package:blog_app/features/blog/domain/usecases/get_all_blogs.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
+import 'package:blog_app/features/profile/data/datasources/profile_remote_data_source.dart';
+import 'package:blog_app/features/profile/data/repository/profile_repository_impl.dart';
+import 'package:blog_app/features/profile/domain/repository/profile_repostitory.dart';
+import 'package:blog_app/features/profile/domain/usecases/get_user_info.dart';
+import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -76,6 +81,11 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory<ProfileRemoteDataSource>(
+      () => ProfileRemoteDataSourceImpl(
+        serviceLocator(),
+      ),
+    )
     ..registerFactory<BlogLocalDataSource>(
       () => BlogLocalDataSourceImpl(
         serviceLocator<Database>(),
@@ -89,6 +99,12 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory<ProfileRepository>(
+      () => ProfileRepositoryImpl(
+        serviceLocator(),
+      ),
+    )
+
     // Usecases
     ..registerFactory(
       () => UploadBlog(
@@ -100,12 +116,21 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
-
+    ..registerFactory(
+      () => GetUserInfo(
+        serviceLocator(),
+      ),
+    )
     // Bloc
     ..registerLazySingleton(
       () => BlogBloc(
         uploadBlog: serviceLocator(),
         getAllBlogs: serviceLocator(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => ProfileBloc(
+        getUserInfo: serviceLocator(),
       ),
     );
 }
