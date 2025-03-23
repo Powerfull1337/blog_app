@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:blog_app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:blog_app/core/common/pages/home_page.dart';
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/image_picker.dart';
 import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/core/utils/topics.dart';
-import 'package:blog_app/features/auth/presentation/pages/blog/blog_page.dart';
 import 'package:blog_app/features/auth/presentation/widgets/add_blog_field.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
@@ -70,7 +70,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
           if (state is BlogFailure) {
             showSnackBar(context, state.error);
           } else if (state is BlogUploadSuccess) {
-            NavigationService.pushAndRemoveUntil(context, const BlogPage());
+            NavigationService.pushAndRemoveUntil(context, const HomePage());
           }
         },
         builder: (context, state) {

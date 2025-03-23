@@ -1,10 +1,10 @@
 import 'package:blog_app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:blog_app/core/common/pages/home_page.dart';
 import 'package:blog_app/core/theme/app_theme.dart';
 import 'package:blog_app/features/auth/presentation/pages/auth/login_page.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/init_dependencies.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:blog_app/features/auth/presentation/pages/blog/blog_page.dart';
 //import 'package:blog_app/presentation/auth/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
-            return const BlogPage();
+            return const HomePage();
           }
           return const LoginPage();
         },

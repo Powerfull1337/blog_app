@@ -23,7 +23,7 @@ class BlogCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+       // margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         height: 200,
         width: double.infinity,

@@ -2,8 +2,8 @@ import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/reading_time.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
-import 'package:blog_app/features/auth/presentation/pages/blog/add_blog_page.dart';
-import 'package:blog_app/features/auth/presentation/pages/blog/details_blog_page.dart';
+import 'package:blog_app/features/blog/presentation/pages/blog/add_blog_page.dart';
+import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
 import 'package:blog_app/features/auth/presentation/widgets/blog_card.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
@@ -29,7 +29,7 @@ class _BlogPageState extends State<BlogPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Blog App"),
+          title: const Text("Blog"),
           centerTitle: true,
           actions: [
             IconButton(
@@ -53,18 +53,22 @@ class _BlogPageState extends State<BlogPage> {
                   itemCount: state.blogs.length,
                   itemBuilder: (context, index) {
                     final blog = state.blogs[index];
-                    return BlogCard(
-                      onTap: (){
-                        NavigationService.push(context, DetailsBlogPage(blog: blog));
-                      },
-                      color: index % 2 == 0
-                          ? AppColors.gradient1
-                          : AppColors.gradient3,
-                      title: blog.title,
-                      topics: blog.topics,
-                      posterName: blog.posterName!,
-                      readingTime:
-                          calculateReadingTime(blog.content).toString(),
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: BlogCard(
+                        onTap: () {
+                          NavigationService.push(
+                              context, DetailsBlogPage(blog: blog));
+                        },
+                        color: index % 2 == 0
+                            ? AppColors.gradient1
+                            : AppColors.gradient3,
+                        title: blog.title,
+                        topics: blog.topics,
+                        posterName: blog.posterName!,
+                        readingTime:
+                            calculateReadingTime(blog.content).toString(),
+                      ),
                     );
                   });
             }

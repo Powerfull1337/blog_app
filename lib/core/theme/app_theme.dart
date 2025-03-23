@@ -3,6 +3,18 @@ import 'package:flutter/material.dart';
 
 ThemeData darkThemeData = ThemeData(
   iconTheme: const IconThemeData(color: AppColors.whiteColor),
+bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+  backgroundColor: AppColors.darkBrown,
+  selectedItemColor: AppColors.whiteColor,
+  unselectedItemColor: Colors.grey, 
+  unselectedIconTheme: IconThemeData(
+    color: Colors.grey,
+  ),
+  unselectedLabelStyle: TextStyle(
+    fontSize: 12, 
+  ),
+),
+
   inputDecorationTheme: const InputDecorationTheme(
     hintStyle: TextStyle(color: AppColors.whiteGrey, fontSize: 18),
     fillColor: AppColors.darkBrown,
