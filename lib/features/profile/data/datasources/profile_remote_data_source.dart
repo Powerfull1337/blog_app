@@ -7,33 +7,40 @@ abstract interface class ProfileRemoteDataSource {
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final SupabaseClient supabaseClient;
+  
 
   ProfileRemoteDataSourceImpl(this.supabaseClient);
 
-  @override
-  Future<UserModel> fetchUserInformation() async {
-    try {
-      final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw Exception("User is not logged in");
+@override
+Future<UserModel> fetchUserInformation() async {
+  try {
+    final userId = supabaseClient.auth.currentUser?.id;
+    if (userId == null) throw Exception("User is not logged in");
 
-      final userInfo = await supabaseClient
-          .from('profiles')
-          .select()
-          .eq('id', userId)
-          .maybeSingle();
+ 
+    final userInfo = await supabaseClient
+        .from('profiles')
+        .select()
+        .eq('id', userId)
+        .maybeSingle();
 
-      if (userInfo != null) {
-        final email = supabaseClient.auth.currentUser?.email;
+    if (userInfo != null) {
 
-        return UserModel.fromJson({
-          ...userInfo,
-          'email': email,
-        });
-      } else {
-        throw Exception("User not found");
-      }
-    } catch (e) {
-      throw Exception(e.toString());
+      final user = await supabaseClient.auth.getUser();
+
+      final email = user.user?.email;
+      final createdAt = user.user?.createdAt;
+      return UserModel.fromJson({
+        ...userInfo,
+        'email': email,
+        'created_at': createdAt, 
+      });
+    } else {
+      throw Exception("User not found");
     }
+  } catch (e) {
+    throw Exception(e.toString());
   }
+}
+
 }

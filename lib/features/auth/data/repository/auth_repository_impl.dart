@@ -32,6 +32,8 @@ class AuthRepositoryImplementation implements AuthRepository {
             id: session.user.id,
             email: session.user.email ?? '',
             name: '',
+            createdAt: DateTime.now(),
+            imageUrl: '',
           ),
         );
       }
@@ -84,6 +86,15 @@ class AuthRepositoryImplementation implements AuthRepository {
       final user = await fn();
 
       return right(user);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> logout() async {
+    try {
+      return right(remoteDataSource.logout());
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }

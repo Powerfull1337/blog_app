@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:blog_app/core/errors/exceptions.dart';
@@ -37,6 +38,7 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       await supabaseClient.storage.from('blog_images').update(blog.id, image);
       return supabaseClient.storage.from('blog_images').getPublicUrl(blog.id);
     } catch (e) {
+      log(e.toString());
       throw ServerException(e.toString());
     }
   }

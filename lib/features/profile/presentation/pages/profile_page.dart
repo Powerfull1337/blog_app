@@ -1,7 +1,12 @@
+import 'package:blog_app/core/constants/images.dart';
 import 'package:blog_app/core/theme/app_colors.dart';
+import 'package:blog_app/core/utils/formated_date.dart';
+import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
+import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
+import 'package:blog_app/features/profile/presentation/pages/edit_profile_info_page.dart';
 import 'package:blog_app/features/profile/presentation/widgets/profile_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,9 +55,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 10),
-                  const CircleAvatar(
-                    radius: 65,
-                    backgroundColor: Colors.red,
+                  CircleAvatar(
+                    radius: 70,
+                    backgroundImage: NetworkImage(user.imageUrl),
                   ),
                   const SizedBox(height: 20),
                   Text(user.name,
@@ -60,39 +65,45 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontSize: 24, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
                   RichText(
-                    text: const TextSpan(
-                      style: TextStyle(
+                    text: TextSpan(
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                       ),
                       children: [
-                        TextSpan(text: 'Active Since  -  '),
+                        const TextSpan(text: 'Active Since  -  '),
                         TextSpan(
-                          text: 'Jul, 2019',
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                          text: formattedByMMMYYYY(user.createdAt),
+                          style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 30),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Personal Information",
+                      const Text("Personal Information",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                           )),
-                      Row(
-                        children: [
-                          Icon(Icons.edit, color: AppColors.blue),
-                          SizedBox(width: 5),
-                          Text("Edit",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.blue)),
-                        ],
+                      GestureDetector(
+                        onTap: () {
+                          NavigationService.push(
+                              context, const EditProfileInfoPage());
+                        },
+                        child: const Row(
+                          children: [
+                            Icon(Icons.edit, color: AppColors.blue),
+                            SizedBox(width: 5),
+                            Text("Edit",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.blue)),
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -128,7 +139,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         Icons.arrow_forward_ios,
                         color: Colors.red,
                       ),
-                      onTap: () {}),
+                      onTap: () {
+                        context.read<AuthBloc>().add(AuthLogout());
+                      }),
                   defaultHeightSizedBox,
                 ],
               ),
