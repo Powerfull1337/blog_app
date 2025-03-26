@@ -1,4 +1,4 @@
-import 'package:blog_app/core/constants/images.dart';
+import 'package:blog_app/core/constants/default_images.dart';
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/formated_date.dart';
 import 'package:blog_app/core/utils/navigation_service.dart';
@@ -7,6 +7,7 @@ import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:blog_app/features/profile/presentation/pages/edit_profile_info_page.dart';
+import 'package:blog_app/features/profile/presentation/pages/user_folowers_page.dart';
 import 'package:blog_app/features/profile/presentation/widgets/profile_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,8 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    const Widget defaultHeightSizedBox = SizedBox(height: 5);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
@@ -55,9 +54,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 10),
-                  CircleAvatar(
+                  // CircleAvatar(
+                  //   radius: 70,
+                  //   backgroundImage: NetworkImage(user.imageUrl),
+                  // ),
+                  const CircleAvatar(
                     radius: 70,
-                    backgroundImage: NetworkImage(user.imageUrl),
+                    backgroundImage:
+                        AssetImage(DefaultImages.userImage) as ImageProvider,
                   ),
                   const SizedBox(height: 20),
                   Text(user.name,
@@ -91,7 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       GestureDetector(
                         onTap: () {
                           NavigationService.push(
-                              context, const EditProfileInfoPage());
+                              context, EditProfileInfoPage(user: user));
                         },
                         child: const Row(
                           children: [
@@ -113,13 +117,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icons.email,
                       sufixWidget: Text(user.email),
                       onTap: () {}),
-                  defaultHeightSizedBox,
+                  const SizedBox(height: 5),
                   ProfileTile(
                       titleText: 'Folowers',
                       icon: Icons.person,
                       sufixWidget: const Text("342"),
-                      onTap: () {}),
-                  defaultHeightSizedBox,
+                      onTap: () {
+                        NavigationService.push(
+                            context, const UserFolowersPage());
+                      }),
                   const SizedBox(height: 30),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -142,7 +148,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         context.read<AuthBloc>().add(AuthLogout());
                       }),
-                  defaultHeightSizedBox,
                 ],
               ),
             ));

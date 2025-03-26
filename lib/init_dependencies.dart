@@ -20,6 +20,7 @@ import 'package:blog_app/features/profile/data/datasources/profile_remote_data_s
 import 'package:blog_app/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:blog_app/features/profile/domain/repository/profile_repostitory.dart';
 import 'package:blog_app/features/profile/domain/usecases/get_user_info.dart';
+import 'package:blog_app/features/profile/domain/usecases/update_user_info.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -105,6 +106,7 @@ void _initBlog() {
     ..registerFactory<ProfileRepository>(
       () => ProfileRepositoryImpl(
         serviceLocator(),
+        serviceLocator(),
       ),
     )
 
@@ -125,6 +127,11 @@ void _initBlog() {
       ),
     )
     ..registerFactory(
+      () => UpdateUserInfo(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => UserLogout(
         serviceLocator(),
       ),
@@ -139,6 +146,7 @@ void _initBlog() {
     ..registerLazySingleton(
       () => ProfileBloc(
         getUserInfo: serviceLocator(),
+        updateUserInfo: serviceLocator(),
       ),
     );
 }

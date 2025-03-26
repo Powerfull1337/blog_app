@@ -6,7 +6,7 @@ ThemeData darkThemeData = ThemeData(
 bottomNavigationBarTheme: const BottomNavigationBarThemeData(
   backgroundColor: AppColors.darkBrown,
   selectedItemColor: AppColors.whiteColor,
-  unselectedItemColor: Colors.grey, 
+  unselectedItemColor: Color.fromARGB(255, 166, 53, 53), 
   unselectedIconTheme: IconThemeData(
     color: Colors.grey,
   ),
