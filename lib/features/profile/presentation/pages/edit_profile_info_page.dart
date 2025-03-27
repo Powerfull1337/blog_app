@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:blog_app/core/constants/default_images.dart';
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/image_picker.dart';
-import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/features/auth/domain/entities/user.dart';
 import 'package:blog_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
@@ -71,15 +71,21 @@ class _EditProfileInfoPageState extends State<EditProfileInfoPage> {
                       const SizedBox(height: 10),
                       GestureDetector(
                         onTap: selectImage,
-                        child: Stack(
+                        child: const Stack(
                           children: [
+                            // CircleAvatar(
+                            //   radius: 70,
+                            //   backgroundImage: image != null
+                            //       ? FileImage(image!)
+                            //       : NetworkImage(widget.user.imageUrl),
+                            // ),
                             CircleAvatar(
                               radius: 70,
-                              backgroundImage: image != null
-                                  ? FileImage(image!)
-                                  : NetworkImage(widget.user.imageUrl),
+                              backgroundImage:
+                                  AssetImage(DefaultImages.userImage)
+                                      as ImageProvider,
                             ),
-                            const Positioned(
+                            Positioned(
                                 bottom: 5,
                                 right: 5,
                                 child: CircleAvatar(

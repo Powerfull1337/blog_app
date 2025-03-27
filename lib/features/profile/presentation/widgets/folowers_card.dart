@@ -1,7 +1,6 @@
 import 'package:blog_app/core/constants/default_images.dart';
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class FolowersCard extends StatelessWidget {
   const FolowersCard({super.key, this.onTap});

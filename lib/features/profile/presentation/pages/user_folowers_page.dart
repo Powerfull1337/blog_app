@@ -1,3 +1,5 @@
+import 'package:blog_app/core/utils/navigation_service.dart';
+import 'package:blog_app/features/profile/presentation/pages/another_user_page.dart';
 import 'package:blog_app/features/profile/presentation/widgets/folowers_card.dart';
 
 import 'package:flutter/material.dart';
@@ -19,7 +21,11 @@ class UserFolowersPage extends StatelessWidget {
       body: ListView.builder(
           itemCount: 15,
           itemBuilder: (context, index) {
-            return const FolowersCard();
+            return FolowersCard(
+              onTap: () {
+                NavigationService.push(context, const AnotherUserPage());
+              },
+            );
           }),
     );
   }
