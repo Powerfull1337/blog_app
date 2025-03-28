@@ -35,7 +35,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         return UserModel.fromJson({
           ...userInfo,
           'email': email,
-          'created_at': createdAt,
+          'updated_at': createdAt,
         });
       } else {
         throw Exception("User not found");

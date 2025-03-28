@@ -25,8 +25,10 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
 
       return BlogModel.fromJson(blogData.first);
     } on PostgrestException catch (e) {
+      log(e.toString());
       throw ServerException(e.message);
     } catch (e) {
+      log(e.toString());
       throw ServerException(e.toString());
     }
   }

@@ -1,4 +1,6 @@
 import 'package:blog_app/core/constants/default_images.dart';
+import 'package:blog_app/core/theme/app_colors.dart';
+import 'package:blog_app/features/profile/presentation/widgets/user_blog_card.dart';
 import 'package:flutter/material.dart';
 
 class AnotherUserPage extends StatelessWidget {
@@ -13,13 +15,13 @@ class AnotherUserPage extends StatelessWidget {
           IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
         ],
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              SizedBox(height: 10),
-              Row(
+              const SizedBox(height: 5),
+              const Row(
                 children: [
                   CircleAvatar(
                     radius: 50,
@@ -70,7 +72,23 @@ class AnotherUserPage extends StatelessWidget {
                     ),
                   )
                 ],
-              )
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(color: AppColors.greyColor)),
+              GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio: 1.0,
+                ),
+                itemBuilder: (context, index) {
+                  return const UserBlogCard();
+                },
+              ),
             ],
           ),
         ),

@@ -7,18 +7,19 @@ import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page
 import 'package:blog_app/features/auth/presentation/widgets/blog_card.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
+import 'package:blog_app/features/blog/presentation/widgets/my_blog_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BlogPage extends StatefulWidget {
-  const BlogPage({super.key});
+class MyBlogPage extends StatefulWidget {
+  const MyBlogPage({super.key});
 
   @override
-  State<BlogPage> createState() => _BlogPageState();
+  State<MyBlogPage> createState() => _MyBlogPageState();
 }
 
-class _BlogPageState extends State<BlogPage> {
+class _MyBlogPageState extends State<MyBlogPage> {
   @override
   void initState() {
     context.read<BlogBloc>().add(BlogFetchAllBlogs());
@@ -29,7 +30,7 @@ class _BlogPageState extends State<BlogPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Blog"),
+          title: const Text("My Blogs"),
           centerTitle: true,
           actions: [
             IconButton(
@@ -49,28 +50,25 @@ class _BlogPageState extends State<BlogPage> {
             if (state is BlogLoading) {
               return const Loader();
             } else if (state is BlogsDisplaySuccess) {
-              return ListView.builder(
-                  itemCount: state.blogs.length,
-                  itemBuilder: (context, index) {
-                    final blog = state.blogs[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: BlogCard(
-                        onTap: () {
-                          NavigationService.push(
-                              context, DetailsBlogPage(blog: blog));
-                        },
-                        color: index % 2 == 0
-                            ? AppColors.gradient1
-                            : AppColors.gradient3,
-                        title: blog.title,
-                        topics: blog.topics,
-                        posterName: blog.posterName!,
-                        readingTime:
-                            calculateReadingTime(blog.content).toString(),
-                      ),
-                    );
-                  });
+              return GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12.0,
+                  mainAxisSpacing: 12.0,
+                  childAspectRatio: 1,
+                ),
+                itemCount: state.blogs.length,
+                itemBuilder: (context, index) {
+                  final blog = state.blogs[index];
+                  return MyBlogCard(
+                      onTap: () {
+                        NavigationService.push(
+                            context, DetailsBlogPage(blog: blog));
+                      },
+                      title: blog.title,
+                      imageUrl: blog.imageUrl);
+                },
+              );
             }
             return const SizedBox();
           },

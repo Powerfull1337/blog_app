@@ -49,6 +49,7 @@ dependencies:
   sqflite: ^2.4.0
   path_provider: ^2.1.5
   salomon_bottom_bar: ^3.3.2
+  font_awesome_flutter: ^10.8.0
 
 dev_dependencies:
   flutter_test:

@@ -32,7 +32,7 @@ class AuthRepositoryImplementation implements AuthRepository {
             id: session.user.id,
             email: session.user.email ?? '',
             name: '',
-            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
             imageUrl: '',
           ),
         );
