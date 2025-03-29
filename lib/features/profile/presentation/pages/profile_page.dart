@@ -8,6 +8,7 @@ import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/my_blog_page.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:blog_app/features/profile/presentation/pages/edit_profile_info_page.dart';
+import 'package:blog_app/features/profile/presentation/pages/user_folowed_page.dart';
 import 'package:blog_app/features/profile/presentation/pages/user_folowers_page.dart';
 import 'package:blog_app/features/profile/presentation/widgets/profile_tile.dart';
 import 'package:flutter/material.dart';
@@ -124,7 +125,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       const SizedBox(width: 15),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          NavigationService.push(
+                              context, const UserFolowedPage());
+                        },
                         child: const Column(
                           children: [
                             Text(
