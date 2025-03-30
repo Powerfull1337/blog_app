@@ -8,8 +8,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract interface class ProfileRemoteDataSource {
   Future<UserModel> fetchUserInformation();
   Future<void> updateUserInformation({required UserModel user});
-  Future<String> uploadProfileImage({required File image, required UserModel user});
+  Future<String> uploadProfileImage(
+      {required File image, required UserModel user});
 }
+
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final SupabaseClient supabaseClient;
 
@@ -46,7 +48,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }
 
   @override
-  Future<String> uploadProfileImage({required File image, required UserModel user}) async {
+  Future<String> uploadProfileImage(
+      {required File image, required UserModel user}) async {
     try {
       await supabaseClient.storage.from('avatars').update(user.id, image);
       return supabaseClient.storage.from('avatars').getPublicUrl(user.id);
@@ -63,17 +66,17 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       if (userId == null) throw Exception("User is not logged in");
 
       final updates = {
-         'name': user.name,
-         'image_url': user.imageUrl,
-        'updated_at': DateTime.now().toIso8601String(),
+        'name': user.name,
+        'avatar_url': user.avatarUrl,
       };
 
       final response = await supabaseClient
           .from('profiles')
           .update(updates)
-          .eq('id', userId);
+          .eq('id', userId).select();
 
-      if (response == null) {
+      if (response.isEmpty) {
+        log(response.toString());
         throw Exception("Failed to update user information");
       }
     } catch (e) {

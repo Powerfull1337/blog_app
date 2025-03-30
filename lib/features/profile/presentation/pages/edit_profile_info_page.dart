@@ -33,12 +33,24 @@ class _EditProfileInfoPageState extends State<EditProfileInfoPage> {
     }
   }
 
-  void updateUserInfo() async {
-    context
-        .read<ProfileBloc>()
-        .add(UpdateUserInformation(name: nameController.text, image: image!));
-    Navigator.pop(context);
+void updateUserInfo() {
+  final newName = nameController.text.trim();
+  final isNameChanged = newName != widget.user.name;
+  final isImageChanged = image != null;
+
+  if (!isNameChanged && !isImageChanged) {
+    Navigator.pop(context); 
+    return;
   }
+
+  context.read<ProfileBloc>().add(UpdateUserInformation(
+    name: isNameChanged ? newName : null,
+    image: isImageChanged ? image : null,
+  ));
+
+  Navigator.pop(context);
+}
+
 
   @override
   void initState() {
@@ -71,21 +83,21 @@ class _EditProfileInfoPageState extends State<EditProfileInfoPage> {
                       const SizedBox(height: 10),
                       GestureDetector(
                         onTap: selectImage,
-                        child: const Stack(
+                        child: Stack(
                           children: [
-                            // CircleAvatar(
-                            //   radius: 70,
-                            //   backgroundImage: image != null
-                            //       ? FileImage(image!)
-                            //       : NetworkImage(widget.user.imageUrl),
-                            // ),
                             CircleAvatar(
                               radius: 70,
-                              backgroundImage:
-                                  AssetImage(DefaultImages.userImage)
-                                      as ImageProvider,
+                              backgroundImage: image != null
+                                  ? FileImage(image!)
+                                  : NetworkImage(widget.user.avatarUrl),
                             ),
-                            Positioned(
+                            // CircleAvatar(
+                            //   radius: 70,
+                            //   backgroundImage:
+                            //       AssetImage(DefaultImages.userImage)
+                            //           as ImageProvider,
+                            // ),
+                            const Positioned(
                                 bottom: 5,
                                 right: 5,
                                 child: CircleAvatar(

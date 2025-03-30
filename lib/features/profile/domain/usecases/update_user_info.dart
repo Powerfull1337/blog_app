@@ -20,12 +20,8 @@ class UpdateUserInfo implements UseCase<User, UpdateUserInfoParams> {
 }
 
 class UpdateUserInfoParams {
-  final String name;
+  final String? name;
+  final File? image;
 
-  final File image;
-
-  UpdateUserInfoParams({
-    required this.name,
-    required this.image,
-  });
+  UpdateUserInfoParams({this.name, this.image});
 }

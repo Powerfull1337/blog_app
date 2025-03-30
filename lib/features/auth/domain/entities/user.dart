@@ -2,7 +2,7 @@ class User {
   final String id;
   final String email;
   final String name;
-  final String imageUrl;
+  final String avatarUrl;
   final DateTime updatedAt;
 
   User(
@@ -10,5 +10,5 @@ class User {
       required this.email,
       required this.name,
       required this.updatedAt,
-      required this.imageUrl});
+      required this.avatarUrl});
 }

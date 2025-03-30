@@ -5,7 +5,7 @@ class UserModel extends User {
     required super.id,
     required super.email,
     required super.name,
-    required super.imageUrl,
+    required super.avatarUrl,
     required super.updatedAt,
   });
 
@@ -14,7 +14,7 @@ class UserModel extends User {
       id: map['id'] ?? '',
       email: map['email'] ?? '',
       name: map['name'] ?? '',
-      imageUrl: map['image_url'] ?? '',
+      avatarUrl: map['avatar_url'] ?? '',
       updatedAt:
           DateTime.parse(map['created_at'] ?? DateTime.now().toIso8601String()),
     );
@@ -25,14 +25,14 @@ class UserModel extends User {
     String? email,
     String? name,
     DateTime? updatedAt,
-    String? imageUrl,
+    String? avatarUrl,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
       updatedAt: updatedAt ?? this.updatedAt,
-      imageUrl: imageUrl ?? this.imageUrl,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
     );
   }
 }

@@ -56,15 +56,15 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // CircleAvatar(
-                  //   radius: 70,
-                  //   backgroundImage: NetworkImage(user.imageUrl),
-                  // ),
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 70,
-                    backgroundImage:
-                        AssetImage(DefaultImages.userImage) as ImageProvider,
+                    backgroundImage: NetworkImage(user.avatarUrl),
                   ),
+                  // const CircleAvatar(
+                  //   radius: 70,
+                  //   backgroundImage:
+                  //       AssetImage(DefaultImages.userImage) as ImageProvider,
+                  // ),
                   const SizedBox(height: 20),
                   Text(user.name,
                       style: const TextStyle(

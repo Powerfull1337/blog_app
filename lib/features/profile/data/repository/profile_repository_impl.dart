@@ -27,31 +27,38 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, User>> updateUserInformation({
-    required File image,
-    required String name,
-  }) async {
-    try {
-      if (!await connectionChecker.isConnected) {
-        return left(Failure(MessageConstants.noInternetConnection));
-      }
+Future<Either<Failure, User>> updateUserInformation({
+  File? image,
+  String? name,
+}) async {
+  try {
+    if (!await connectionChecker.isConnected) {
+      return left(Failure(MessageConstants.noInternetConnection));
+    }
 
-      final currentUser = await profileRemoteDataSource.fetchUserInformation();
+    final currentUser = await profileRemoteDataSource.fetchUserInformation();
+    UserModel userModel = currentUser;
 
-      UserModel userModel = currentUser.copyWith(name: name);
+    String? avatarUrl;
 
-      final imageUrl = await profileRemoteDataSource.uploadProfileImage(
+    if (image != null) {
+      avatarUrl = await profileRemoteDataSource.uploadProfileImage(
         user: userModel,
         image: image,
       );
-
-      userModel = userModel.copyWith(imageUrl: imageUrl);
-
-      await profileRemoteDataSource.updateUserInformation(user: userModel);
-
-      return right(userModel);
-    } on ServerException catch (e) {
-      return left(Failure(e.toString()));
+      userModel = userModel.copyWith(avatarUrl: avatarUrl);
     }
+
+    if (name != null && name.isNotEmpty) {
+      userModel = userModel.copyWith(name: name);
+    }
+
+    await profileRemoteDataSource.updateUserInformation(user: userModel);
+
+    return right(userModel);
+  } on ServerException catch (e) {
+    return left(Failure(e.toString()));
   }
+}
+
 }

@@ -14,11 +14,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetUserInfo _getUserInfo;
   final UpdateUserInfo _updateUserInfo;
 
-  ProfileBloc({required final GetUserInfo getUserInfo, required final UpdateUserInfo updateUserInfo})
+  ProfileBloc(
+      {required final GetUserInfo getUserInfo,
+      required final UpdateUserInfo updateUserInfo})
       : _getUserInfo = getUserInfo,
         _updateUserInfo = updateUserInfo,
         super(ProfileInitial()) {
-    on<ProfileEvent>((_, emit) => emit(ProfileLoading()));  
+    on<ProfileEvent>((_, emit) => emit(ProfileLoading()));
     on<FetchUserInformation>(_fetchUserInfo);
     on<UpdateUserInformation>(_updateUserInfoHandler);
   }
@@ -39,6 +41,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     emit(ProfileLoading());
+
     final res = await _updateUserInfo(UpdateUserInfoParams(
       name: event.name,
       image: event.image,
