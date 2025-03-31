@@ -1,5 +1,6 @@
-import 'package:blog_app/features/blog/presentation/pages/blog/my_blog_page.dart';
+
 import 'package:blog_app/features/profile/presentation/pages/profile_page.dart';
+import 'package:blog_app/features/profile/presentation/pages/recomendations_users_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
               setState(() => _selectedPageIndex = value);
             },
             children: const [
-              MyBlogPage(),
+              RecomendationsUsersPage(),
               ProfilePage(),
             ],
           ),
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
           items: [
             SalomonBottomBarItem(
               icon: const FaIcon(FontAwesomeIcons.newspaper),
-              title: const Text('Blogs'),
+              title: const Text('Recomendations'),
               selectedColor:
                   Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
               unselectedColor: Theme.of(context)

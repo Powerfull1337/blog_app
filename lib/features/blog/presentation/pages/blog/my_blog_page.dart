@@ -1,10 +1,8 @@
-import 'package:blog_app/core/theme/app_colors.dart';
+
 import 'package:blog_app/core/utils/navigation_service.dart';
-import 'package:blog_app/core/utils/reading_time.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/add_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
-import 'package:blog_app/features/auth/presentation/widgets/blog_card.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/widgets/my_blog_card.dart';

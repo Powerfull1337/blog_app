@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:blog_app/core/constants/default_images.dart';
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/image_picker.dart';
 import 'package:blog_app/features/auth/domain/entities/user.dart';
@@ -20,7 +19,7 @@ class EditProfileInfoPage extends StatefulWidget {
 
 class _EditProfileInfoPageState extends State<EditProfileInfoPage> {
   final nameController = TextEditingController();
-  final passwordController = TextEditingController();
+  final bioController = TextEditingController();
 
   File? image;
   void selectImage() async {
@@ -33,28 +32,33 @@ class _EditProfileInfoPageState extends State<EditProfileInfoPage> {
     }
   }
 
-void updateUserInfo() {
-  final newName = nameController.text.trim();
-  final isNameChanged = newName != widget.user.name;
-  final isImageChanged = image != null;
+  void updateUserInfo() {
+    final newName = nameController.text.trim();
+    final newBio = bioController.text.trim();
 
-  if (!isNameChanged && !isImageChanged) {
-    Navigator.pop(context); 
-    return;
+    final isNameChanged = newName != widget.user.name;
+    final isBioChanged = newBio != widget.user.bio;
+
+    final isImageChanged = image != null;
+
+    if (!isNameChanged && !isImageChanged && !isBioChanged) {
+      Navigator.pop(context);
+      return;
+    }
+
+    context.read<ProfileBloc>().add(UpdateUserInformation(
+          name: isNameChanged ? newName : null,
+          image: isImageChanged ? image : null,
+          bio: isBioChanged ? newBio : null,
+        ));
+
+    Navigator.pop(context);
   }
-
-  context.read<ProfileBloc>().add(UpdateUserInformation(
-    name: isNameChanged ? newName : null,
-    image: isImageChanged ? image : null,
-  ));
-
-  Navigator.pop(context);
-}
-
 
   @override
   void initState() {
     nameController.text = widget.user.name;
+    bioController.text = widget.user.bio;
     super.initState();
   }
 
@@ -118,9 +122,10 @@ void updateUserInfo() {
                       ),
                       const SizedBox(height: 20),
                       AuthField(
-                        hintText: "Password",
-                        controller: nameController,
-                        obscureText: true,
+                        maxLength: 150,
+                        maxLines: 4,
+                        hintText: "Bio",
+                        controller: bioController,
                       ),
                     ]))));
   }

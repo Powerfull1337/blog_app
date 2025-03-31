@@ -15,13 +15,15 @@ class UpdateUserInfo implements UseCase<User, UpdateUserInfoParams> {
     return await profileRepository.updateUserInformation(
       image: params.image,
       name: params.name,
+      bio: params.bio
     );
   }
 }
 
 class UpdateUserInfoParams {
   final String? name;
+  final String? bio;
   final File? image;
 
-  UpdateUserInfoParams({this.name, this.image});
+  UpdateUserInfoParams({this.name, this.image, this.bio});
 }

@@ -7,6 +7,12 @@ final class ProfileInitial extends ProfileState {}
 
 final class ProfileLoading extends ProfileState {}
 
+final class UsersLoaded extends ProfileState {
+  final List<User> users;
+
+  UsersLoaded({required this.users});
+}
+
 final class ProfileLoaded extends ProfileState {
   final User user;
 

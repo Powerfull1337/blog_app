@@ -27,38 +27,48 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-Future<Either<Failure, User>> updateUserInformation({
-  File? image,
-  String? name,
-}) async {
-  try {
-    if (!await connectionChecker.isConnected) {
-      return left(Failure(MessageConstants.noInternetConnection));
+  Future<Either<Failure, User>> updateUserInformation({
+    File? image,
+    String? name,
+    String? bio,
+  }) async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(MessageConstants.noInternetConnection));
+      }
+
+      final currentUser = await profileRemoteDataSource.fetchUserInformation();
+      UserModel userModel = currentUser;
+
+      String? avatarUrl;
+
+      if (image != null) {
+        avatarUrl = await profileRemoteDataSource.uploadProfileImage(
+          user: userModel,
+          image: image,
+        );
+        userModel = userModel.copyWith(avatarUrl: avatarUrl);
+      }
+
+      // if (name != null && name.isNotEmpty) {
+      userModel = userModel.copyWith(name: name, bio: bio);
+      // }
+
+      await profileRemoteDataSource.updateUserInformation(user: userModel);
+
+      return right(userModel);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
     }
-
-    final currentUser = await profileRemoteDataSource.fetchUserInformation();
-    UserModel userModel = currentUser;
-
-    String? avatarUrl;
-
-    if (image != null) {
-      avatarUrl = await profileRemoteDataSource.uploadProfileImage(
-        user: userModel,
-        image: image,
-      );
-      userModel = userModel.copyWith(avatarUrl: avatarUrl);
-    }
-
-    if (name != null && name.isNotEmpty) {
-      userModel = userModel.copyWith(name: name);
-    }
-
-    await profileRemoteDataSource.updateUserInformation(user: userModel);
-
-    return right(userModel);
-  } on ServerException catch (e) {
-    return left(Failure(e.toString()));
   }
-}
-
+  
+  @override
+  Future<Either<Failure, List<User>>> getAllUsers()async{
+      try {
+      final users = await profileRemoteDataSource.fetchAllUsers();
+      return right(users);
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
 }

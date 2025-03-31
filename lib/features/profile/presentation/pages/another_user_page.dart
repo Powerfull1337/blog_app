@@ -1,16 +1,19 @@
-import 'package:blog_app/core/constants/default_images.dart';
 import 'package:blog_app/core/theme/app_colors.dart';
+
+import 'package:blog_app/features/auth/domain/entities/user.dart';
 import 'package:blog_app/features/profile/presentation/widgets/user_blog_card.dart';
 import 'package:flutter/material.dart';
 
 class AnotherUserPage extends StatelessWidget {
-  const AnotherUserPage({super.key});
+  const AnotherUserPage({super.key, required this.user});
+
+  final User user;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("UserName"),
+        title: Text(user.name),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
         ],
@@ -21,15 +24,14 @@ class AnotherUserPage extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 5),
-              const Row(
+              Row(
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage:
-                        AssetImage(DefaultImages.userImage) as ImageProvider,
+                    backgroundImage: NetworkImage(user.avatarUrl),
                   ),
-                  SizedBox(width: 15),
-                  Expanded(
+                  const SizedBox(width: 15),
+                  const Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -74,10 +76,9 @@ class AnotherUserPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              const Text(
-                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+              Text(user.bio,
                   textAlign: TextAlign.justify,
-                  style: TextStyle(color: AppColors.greyColor)),
+                  style: const TextStyle(color: AppColors.greyColor)),
               const SizedBox(height: 15),
               Row(
                 children: [

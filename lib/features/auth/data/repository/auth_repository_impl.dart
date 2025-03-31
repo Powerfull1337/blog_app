@@ -32,6 +32,7 @@ class AuthRepositoryImplementation implements AuthRepository {
             id: session.user.id,
             email: session.user.email ?? '',
             name: '',
+            bio: '',
             updatedAt: DateTime.now(),
             avatarUrl: '',
           ),

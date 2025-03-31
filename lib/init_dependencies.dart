@@ -19,6 +19,7 @@ import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:blog_app/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:blog_app/features/profile/domain/repository/profile_repostitory.dart';
+import 'package:blog_app/features/profile/domain/usecases/get_all_users.dart';
 import 'package:blog_app/features/profile/domain/usecases/get_user_info.dart';
 import 'package:blog_app/features/profile/domain/usecases/update_user_info.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
@@ -132,6 +133,11 @@ void _initBlog() {
       ),
     )
     ..registerFactory(
+      () => GetAllUsers(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => UserLogout(
         serviceLocator(),
       ),
@@ -147,6 +153,7 @@ void _initBlog() {
       () => ProfileBloc(
         getUserInfo: serviceLocator(),
         updateUserInfo: serviceLocator(),
+        getAllUsers: serviceLocator(),
       ),
     );
 }

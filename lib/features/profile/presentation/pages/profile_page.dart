@@ -1,4 +1,4 @@
-import 'package:blog_app/core/constants/default_images.dart';
+
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/formated_date.dart';
 import 'package:blog_app/core/utils/navigation_service.dart';
@@ -56,36 +56,51 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 70,
-                    backgroundImage: NetworkImage(user.avatarUrl),
-                  ),
-                  // const CircleAvatar(
-                  //   radius: 70,
-                  //   backgroundImage:
-                  //       AssetImage(DefaultImages.userImage) as ImageProvider,
-                  // ),
-                  const SizedBox(height: 20),
-                  Text(user.name,
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
-                  RichText(
-                    text: TextSpan(
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CircleAvatar(
+                        radius: 70,
+                        backgroundImage: NetworkImage(user.avatarUrl),
                       ),
-                      children: [
-                        const TextSpan(text: 'Active Since  -  '),
-                        TextSpan(
-                          text: formattedByMMMYYYY(user.updatedAt),
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
+                      // const CircleAvatar(
+                      //   radius: 70,
+                      //   backgroundImage:
+                      //       AssetImage(DefaultImages.userImage) as ImageProvider,
+                      // ),
+
+                      Column(
+                        children: [
+                          Text(user.name,
+                              style: const TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 15),
+                          RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300,
+                              ),
+                              children: [
+                                const TextSpan(text: 'Active Since  -  '),
+                                TextSpan(
+                                  text: formattedByMMMYYYY(user.updatedAt),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                            user.bio,
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -143,7 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -178,7 +193,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       sufixWidget: Text(user.email),
                       onTap: () {}),
                   const SizedBox(height: 5),
-
                   const SizedBox(height: 30),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -202,7 +216,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 5),
                   ProfileTile(
                       titleText: 'Logout',
-                      icon: Icons.email,
+                      icon: FontAwesomeIcons.signOut,
                       sufixWidget: const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.red,

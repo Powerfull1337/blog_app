@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class ProfileRemoteDataSource {
   Future<UserModel> fetchUserInformation();
+  Future<List<UserModel>> fetchAllUsers();
   Future<void> updateUserInformation({required UserModel user});
   Future<String> uploadProfileImage(
       {required File image, required UserModel user});
@@ -25,7 +26,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
       final userInfo = await supabaseClient
           .from('profiles')
-          .select()
+          .select('id, name, avatar_url, bio')
           .eq('id', userId)
           .maybeSingle();
 
@@ -68,12 +69,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final updates = {
         'name': user.name,
         'avatar_url': user.avatarUrl,
+        'bio': user.bio,
       };
 
       final response = await supabaseClient
           .from('profiles')
           .update(updates)
-          .eq('id', userId).select();
+          .eq('id', userId)
+          .select();
 
       if (response.isEmpty) {
         log(response.toString());
@@ -81,6 +84,25 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
     } catch (e) {
       log(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<List<UserModel>> fetchAllUsers() async {
+    try {
+      final currentUserId = supabaseClient.auth.currentUser?.id;
+      if (currentUserId == null) throw Exception("User is not logged in");
+
+      final usersData = await supabaseClient
+          .from('profiles')
+          .select('id, name, avatar_url, bio')
+          .neq('id', currentUserId); 
+
+      return usersData
+          .map<UserModel>((user) => UserModel.fromJson(user))
+          .toList();
+    } catch (e) {
       throw Exception(e.toString());
     }
   }
