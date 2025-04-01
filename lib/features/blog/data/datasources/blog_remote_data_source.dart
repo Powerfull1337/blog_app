@@ -72,7 +72,7 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
     final blogs = await supabaseClient
         .from('blogs')
         .select('*, profiles (name)')
-        .eq('user_id', userId); 
+        .eq('poster_id', userId); 
 
     return blogs
         .map(
@@ -82,8 +82,10 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
         )
         .toList();
   } on PostgrestException catch (e) {
+    log(e.toString());
     throw ServerException(e.message);
   } catch (e) {
+     log(e.toString());
     throw ServerException(e.toString());
   }
   }

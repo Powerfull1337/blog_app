@@ -71,7 +71,7 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, List<Blog>>> getAllBlogsById(String userId) async {
+  Future<Either<Failure, List<Blog>>> getAllBlogsById({required String userId}) async {
     try {
       if (!await (connectionChecker.isConnected)) {
         final blogs = await blogLocalDataSource.loadBlogs();

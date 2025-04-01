@@ -1,19 +1,35 @@
 import 'package:blog_app/core/theme/app_colors.dart';
+import 'package:blog_app/core/utils/snackbar.dart';
 
 import 'package:blog_app/features/auth/domain/entities/user.dart';
+import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
+import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
+import 'package:blog_app/features/blog/presentation/widgets/my_blog_card.dart';
 import 'package:blog_app/features/profile/presentation/widgets/user_blog_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AnotherUserPage extends StatelessWidget {
+class AnotherUserPage extends StatefulWidget {
   const AnotherUserPage({super.key, required this.user});
 
   final User user;
 
   @override
+  State<AnotherUserPage> createState() => _AnotherUserPageState();
+}
+
+class _AnotherUserPageState extends State<AnotherUserPage> {
+  @override
+  void initState() {
+    context.read<BlogBloc>().add(BlogFetchAllBlogsById(userId: widget.user.id));
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(user.name),
+        title: Text(widget.user.name),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
         ],
@@ -28,7 +44,7 @@ class AnotherUserPage extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(user.avatarUrl),
+                    backgroundImage: NetworkImage(widget.user.avatarUrl),
                   ),
                   const SizedBox(width: 15),
                   const Expanded(
@@ -76,7 +92,7 @@ class AnotherUserPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              Text(user.bio,
+              Text(widget.user.bio,
                   textAlign: TextAlign.justify,
                   style: const TextStyle(color: AppColors.greyColor)),
               const SizedBox(height: 15),
@@ -124,20 +140,40 @@ class AnotherUserPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 15),
-              SizedBox(
-                height: 400,
-                child: GridView.builder(
-                  itemCount: 10,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                    childAspectRatio: 1.0,
-                  ),
-                  itemBuilder: (context, index) {
-                    return const UserBlogCard();
-                  },
-                ),
+              BlocConsumer<BlogBloc, BlogState>(
+                listener: (context, state) {
+                  if (state is BlogFailure) {
+                    showSnackBar(context, state.error);
+                  }
+                },
+                builder: (context, state) {
+                  if (state is BlogLoading) {
+                    return const Loader();
+                  } else if (state is BlogsDisplaySuccess) {
+                    return SizedBox(
+                      height: 400,
+                      child: GridView.builder(
+                        itemCount: state.blogs.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 8.0,
+                          mainAxisSpacing: 8.0,
+                          childAspectRatio: 1.0,
+                        ),
+                        itemBuilder: (context, index) {
+                          final blog = state.blogs[index];
+                          return MyBlogCard(
+                            title: blog.title,
+                            imageUrl: blog.imageUrl,
+                          );
+                        },
+                      ),
+                    );
+                  }
+
+                  return const SizedBox();
+                },
               ),
             ],
           ),
