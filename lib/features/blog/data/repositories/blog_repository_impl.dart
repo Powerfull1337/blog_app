@@ -1,4 +1,6 @@
+import 'dart:developer';
 import 'dart:io';
+
 
 import 'package:blog_app/core/constants/message_constants.dart';
 import 'package:blog_app/core/errors/exceptions.dart';
@@ -71,7 +73,8 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, List<Blog>>> getAllBlogsById({required String userId}) async {
+  Future<Either<Failure, List<Blog>>> getAllBlogsById(
+      {required String userId}) async {
     try {
       if (!await (connectionChecker.isConnected)) {
         final blogs = await blogLocalDataSource.loadBlogs();
@@ -81,6 +84,20 @@ class BlogRepositoryImpl implements BlogRepository {
       final blogs = await blogRemoteDataSource.getAllBlogsById(userId);
       blogLocalDataSource.uploadLocalBlogs(blogs: blogs);
       return right(blogs);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> getCountBlog({required String userId}) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(MessageConstants.noInternetConnection));
+      }
+      final count = await blogRemoteDataSource.getCountBlog(userId);
+      log("Fetched count: $count");
+      return right(count);
     } on ServerException catch (e) {
       return left(Failure(e.toString()));
     }

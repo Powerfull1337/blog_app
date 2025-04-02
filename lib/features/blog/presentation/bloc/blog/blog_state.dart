@@ -16,6 +16,12 @@ final class BlogsDisplaySuccess extends BlogState {
   BlogsDisplaySuccess(this.blogs); 
 }
 
+final class BlogCountSuccess extends BlogState {
+  final int count;
+
+  BlogCountSuccess(this.count);
+}
+
 final class BlogFailure extends BlogState {
   final String error;
 

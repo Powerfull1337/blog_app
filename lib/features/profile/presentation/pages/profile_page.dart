@@ -1,10 +1,10 @@
-
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/formated_date.dart';
 import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
+import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/my_blog_page.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:blog_app/features/profile/presentation/pages/edit_profile_info_page.dart';
@@ -25,8 +25,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
-    context.read<ProfileBloc>().add(FetchUserInformation());
     super.initState();
+    context.read<ProfileBloc>().add(FetchUserInformation());
   }
 
   @override
@@ -50,183 +50,190 @@ class _ProfilePageState extends State<ProfilePage> {
             return const Loader();
           } else if (state is ProfileLoaded) {
             final user = state.user;
-            return SafeArea(
-                child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CircleAvatar(
-                        radius: 70,
-                        backgroundImage: NetworkImage(user.avatarUrl),
-                      ),
-                      // const CircleAvatar(
-                      //   radius: 70,
-                      //   backgroundImage:
-                      //       AssetImage(DefaultImages.userImage) as ImageProvider,
-                      // ),
+            context.read<BlogBloc>().add(BlogFetchAllBlogsById(userId: user.id));
 
-                      Column(
-                        children: [
-                          Text(user.name,
-                              style: const TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 15),
-                          RichText(
-                            text: TextSpan(
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w300,
-                              ),
-                              children: [
-                                const TextSpan(text: 'Active Since  -  '),
-                                TextSpan(
-                                  text: formattedByMMMYYYY(user.updatedAt),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500),
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CircleAvatar(
+                          radius: 70,
+                          backgroundImage: NetworkImage(user.avatarUrl),
+                        ),
+                        Column(
+                          children: [
+                            Text(user.name,
+                                style: const TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 15),
+                            RichText(
+                              text: TextSpan(
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w300,
                                 ),
-                              ],
+                                children: [
+                                  const TextSpan(text: 'Active Since  -  '),
+                                  TextSpan(
+                                    text: formattedByMMMYYYY(user.updatedAt),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 15),
-                          Text(
-                            user.bio,
-                            textAlign: TextAlign.start,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          NavigationService.push(context, const MyBlogPage());
-                        },
-                        child: const Column(
-                          children: [
+                            const SizedBox(height: 15),
                             Text(
-                              "100",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
+                              user.bio,
+                              textAlign: TextAlign.start,
                             ),
-                            SizedBox(height: 5),
-                            Text("Блогів"),
                           ],
                         ),
-                      ),
-                      const SizedBox(width: 15),
-                      GestureDetector(
-                        onTap: () {
-                          NavigationService.push(
-                              context, const UserFolowersPage());
-                        },
-                        child: const Column(
-                          children: [
-                            Text(
-                              "100",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
-                            ),
-                            SizedBox(height: 5),
-                            Text("Читачів"),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 15),
-                      GestureDetector(
-                        onTap: () {
-                          NavigationService.push(
-                              context, const UserFolowedPage());
-                        },
-                        child: const Column(
-                          children: [
-                            Text(
-                              "100",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
-                            ),
-                            SizedBox(height: 5),
-                            Text("Відстежує"),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Personal Information",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          )),
-                      GestureDetector(
-                        onTap: () {
-                          NavigationService.push(
-                              context, EditProfileInfoPage(user: user));
-                        },
-                        child: const Row(
-                          children: [
-                            Icon(Icons.edit, color: AppColors.blue),
-                            SizedBox(width: 5),
-                            Text("Edit",
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.blue)),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  ProfileTile(
-                      titleText: 'Email',
-                      icon: Icons.email,
-                      sufixWidget: Text(user.email),
-                      onTap: () {}),
-                  const SizedBox(height: 5),
-                  const SizedBox(height: 30),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text("Utilities",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          )),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  const ProfileTile(
-                    titleText: 'Settings',
-                    icon: FontAwesomeIcons.tools,
-                    sufixWidget: Icon(
-                      Icons.arrow_forward_ios,
-                      color: AppColors.blue,
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  ProfileTile(
-                      titleText: 'Logout',
-                      icon: FontAwesomeIcons.signOut,
-                      sufixWidget: const Icon(
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        BlocBuilder<BlogBloc, BlogState>(
+                          builder: (context, blogState) {
+                            if (blogState is BlogsDisplaySuccess) {
+                              final blogCount = blogState.blogs.length;
+                              return GestureDetector(
+                                onTap: () {
+                                  NavigationService.push(
+                                      context, const MyBlogPage());
+                                },
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      blogCount.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    const Text("Блогів"),
+                                  ],
+                                ),
+                              );
+                            }
+                            return const Text("Loading...");
+                          },
+                        ),
+                        const SizedBox(width: 15),
+                        GestureDetector(
+                          onTap: () {
+                            NavigationService.push(
+                                context, const UserFolowersPage());
+                          },
+                          child: const Column(
+                            children: [
+                              Text(
+                                "100",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(height: 5),
+                              Text("Читачів"),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        GestureDetector(
+                          onTap: () {
+                            NavigationService.push(
+                                context, const UserFolowedPage());
+                          },
+                          child: const Column(
+                            children: [
+                              Text(
+                                "100",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(height: 5),
+                              Text("Відстежує"),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Personal Information",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            )),
+                        GestureDetector(
+                          onTap: () {
+                            NavigationService.push(
+                                context, EditProfileInfoPage(user: user));
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.edit, color: AppColors.blue),
+                              SizedBox(width: 5),
+                              Text("Edit",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.blue)),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    ProfileTile(
+                        titleText: 'Email',
+                        icon: Icons.email,
+                        sufixWidget: Text(user.email),
+                        onTap: () {}),
+                    const SizedBox(height: 5),
+                    const SizedBox(height: 30),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text("Utilities",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            )),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const ProfileTile(
+                      titleText: 'Settings',
+                      icon: FontAwesomeIcons.tools,
+                      sufixWidget: Icon(
                         Icons.arrow_forward_ios,
-                        color: Colors.red,
+                        color: AppColors.blue,
                       ),
-                      onTap: () {
-                        context.read<AuthBloc>().add(AuthLogout());
-                      }),
-                ],
+                    ),
+                    const SizedBox(height: 5),
+                    ProfileTile(
+                        titleText: 'Logout',
+                        icon: FontAwesomeIcons.signOut,
+                        sufixWidget: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.red,
+                        ),
+                        onTap: () {
+                          context.read<AuthBloc>().add(AuthLogout());
+                        }),
+                  ],
+                ),
               ),
-            ));
+            );
           }
           return const SizedBox();
         },

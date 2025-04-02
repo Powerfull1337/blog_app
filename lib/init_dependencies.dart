@@ -15,6 +15,7 @@ import 'package:blog_app/features/blog/data/repositories/blog_repository_impl.da
 import 'package:blog_app/features/blog/domain/repositories/blog_repository.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_all_blogs.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_all_blogs_by_id.dart';
+import 'package:blog_app/features/blog/domain/usecases/get_count_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/profile/data/datasources/profile_remote_data_source.dart';
@@ -128,11 +129,17 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+       ..registerFactory(
+      () => GetCountBlog(
+        serviceLocator(),
+      ),
+    )
     ..registerFactory(
       () => GetUserInfo(
         serviceLocator(),
       ),
     )
+    
     ..registerFactory(
       () => UpdateUserInfo(
         serviceLocator(),
@@ -154,6 +161,7 @@ void _initBlog() {
         uploadBlog: serviceLocator(),
         getAllBlogs: serviceLocator(),
         getAllBlogsById: serviceLocator(),
+        getCountBlog: serviceLocator(),
       ),
     )
     ..registerLazySingleton(

@@ -1,6 +1,7 @@
 
 import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
+import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/add_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
@@ -18,11 +19,22 @@ class MyBlogPage extends StatefulWidget {
 }
 
 class _MyBlogPageState extends State<MyBlogPage> {
-  @override
-  void initState() {
-    context.read<BlogBloc>().add(BlogFetchAllBlogs());
-    super.initState();
-  }
+@override
+void initState() {
+  super.initState();
+  
+  final userState = context.read<AuthBloc>().state;
+  
+  if (userState is AuthSuccess) {
+
+    final user = userState.user;
+    
+
+    context.read<BlogBloc>().add(BlogFetchAllBlogsById(userId:  user.id));
+  } 
+}
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class BlogRemoteDataSource {
   Future<BlogModel> uploadBlog(BlogModel blog);
+  Future<int> getCountBlog(String userId);
   Future<String> uploadBlogImage(
       {required File image, required BlogModel blog});
   Future<List<BlogModel>> getAllBlogs();
@@ -65,28 +66,43 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       throw ServerException(e.toString());
     }
   }
-  
-  @override
-  Future<List<BlogModel>> getAllBlogsById(String userId)async {
- try {
-    final blogs = await supabaseClient
-        .from('blogs')
-        .select('*, profiles (name)')
-        .eq('poster_id', userId); 
 
-    return blogs
-        .map(
-          (blog) => BlogModel.fromJson(blog).copyWith(
-            posterName: blog['profiles']['name'],
-          ),
-        )
-        .toList();
-  } on PostgrestException catch (e) {
-    log(e.toString());
-    throw ServerException(e.message);
+  @override
+  Future<List<BlogModel>> getAllBlogsById(String userId) async {
+    try {
+      final blogs = await supabaseClient
+          .from('blogs')
+          .select('*, profiles (name)')
+          .eq('poster_id', userId);
+
+      return blogs
+          .map(
+            (blog) => BlogModel.fromJson(blog).copyWith(
+              posterName: blog['profiles']['name'],
+            ),
+          )
+          .toList();
+    } on PostgrestException catch (e) {
+      log(e.toString());
+      throw ServerException(e.message);
+    } catch (e) {
+      log(e.toString());
+      throw ServerException(e.toString());
+    }
+  }
+@override
+Future<int> getCountBlog(String userId) async {
+  try {
+    final blogs = await supabaseClient
+    .from('blogs')
+    .select('id')
+    .eq('poster_id', userId);
+
+return blogs.length;
   } catch (e) {
-     log(e.toString());
+    log(e.toString());
     throw ServerException(e.toString());
   }
-  }
+}
+
 }

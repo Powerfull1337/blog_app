@@ -26,3 +26,8 @@ final class BlogFetchAllBlogsById extends BlogEvent {
 
   BlogFetchAllBlogsById({required this.userId});
 }
+final class BlogFetchCount extends BlogEvent {
+  final String userId;
+
+  BlogFetchCount({required this.userId});
+}

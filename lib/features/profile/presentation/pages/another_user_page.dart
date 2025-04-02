@@ -1,11 +1,12 @@
 import 'package:blog_app/core/theme/app_colors.dart';
+import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 
 import 'package:blog_app/features/auth/domain/entities/user.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
+import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/widgets/my_blog_card.dart';
-import 'package:blog_app/features/profile/presentation/widgets/user_blog_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -156,14 +157,18 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                         itemCount: state.blogs.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                          crossAxisCount: 3,
                           crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
-                          childAspectRatio: 1.0,
+                          mainAxisSpacing: 4.0,
+                          childAspectRatio: 0.7,
                         ),
                         itemBuilder: (context, index) {
                           final blog = state.blogs[index];
                           return MyBlogCard(
+                            onTap: () {
+                              NavigationService.push(
+                                  context, DetailsBlogPage(blog: blog));
+                            },
                             title: blog.title,
                             imageUrl: blog.imageUrl,
                           );

@@ -18,6 +18,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   ProfileRemoteDataSourceImpl(this.supabaseClient);
 
+
+  String? get currentUserId => supabaseClient.auth.currentUser?.id;
+
   @override
   Future<UserModel> fetchUserInformation() async {
     try {
