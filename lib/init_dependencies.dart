@@ -22,9 +22,13 @@ import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:blog_app/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:blog_app/features/profile/domain/repository/profile_repostitory.dart';
+import 'package:blog_app/features/profile/domain/usecases/follow_to_user.dart';
 import 'package:blog_app/features/profile/domain/usecases/get_all_users.dart';
 import 'package:blog_app/features/profile/domain/usecases/get_user_info.dart';
+import 'package:blog_app/features/profile/domain/usecases/is_folowing.dart';
+import 'package:blog_app/features/profile/domain/usecases/unfollow_to_user.dart';
 import 'package:blog_app/features/profile/domain/usecases/update_user_info.dart';
+import 'package:blog_app/features/profile/presentation/bloc/follow/follow_bloc.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -170,6 +174,21 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => FollowToUser(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => UnFollowToUser(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => IsFollowing(
+        serviceLocator(),
+      ),
+    )
 
     // Bloc
     ..registerLazySingleton(
@@ -188,6 +207,13 @@ void _initBlog() {
         getUserInfo: serviceLocator(),
         updateUserInfo: serviceLocator(),
         getAllUsers: serviceLocator(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => FollowBloc(
+        isFollowing: serviceLocator(),
+        subscribeToUser: serviceLocator(),
+        unSubscribeToUser: serviceLocator(),
       ),
     );
 }

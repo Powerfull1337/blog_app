@@ -50,9 +50,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         userModel = userModel.copyWith(avatarUrl: avatarUrl);
       }
 
-      // if (name != null && name.isNotEmpty) {
       userModel = userModel.copyWith(name: name, bio: bio);
-      // }
 
       await profileRemoteDataSource.updateUserInformation(user: userModel);
 
@@ -61,13 +59,55 @@ class ProfileRepositoryImpl implements ProfileRepository {
       return left(Failure(e.toString()));
     }
   }
-  
+
   @override
-  Future<Either<Failure, List<User>>> getAllUsers()async{
-      try {
+  Future<Either<Failure, List<User>>> getAllUsers() async {
+    try {
       final users = await profileRemoteDataSource.fetchAllUsers();
       return right(users);
     } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> followUser(String userId) async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(MessageConstants.noInternetConnection));
+      }
+
+      await profileRemoteDataSource.followUser(userId: userId);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> unfollowUser(String userId) async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(MessageConstants.noInternetConnection));
+      }
+
+      await profileRemoteDataSource.unfollowUser(userId: userId);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> isFollowing(String userId) async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(MessageConstants.noInternetConnection));
+      }
+
+      final result = await profileRemoteDataSource.isFollowing(userId: userId);
+      return right(result);
+    } on ServerException catch (e) {
       return left(Failure(e.toString()));
     }
   }

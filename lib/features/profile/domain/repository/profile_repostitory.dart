@@ -12,4 +12,8 @@ abstract interface class ProfileRepository {
     String? name,
     String? bio,
   });
+
+  Future<Either<Failure,void>> followUser(String userId);
+  Future<Either<Failure, void>> unfollowUser(String userId);
+  Future<Either<Failure, bool>> isFollowing(String userId);
 }

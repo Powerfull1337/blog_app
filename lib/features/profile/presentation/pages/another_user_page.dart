@@ -1,14 +1,18 @@
+
+
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
-
 import 'package:blog_app/features/auth/domain/entities/user.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/widgets/my_blog_card.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/follow/follow_bloc.dart';
 
 class AnotherUserPage extends StatefulWidget {
   const AnotherUserPage({super.key, required this.user});
@@ -27,6 +31,10 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
       context
           .read<BlogBloc>()
           .add(BlogFetchAllBlogsById(userId: widget.user.id));
+
+      context
+          .read<FollowBloc>()
+          .add(CheckIfFollowing(widget.user.id));
     });
   }
 
@@ -87,27 +95,75 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                   textAlign: TextAlign.justify,
                   style: const TextStyle(color: AppColors.greyColor)),
               const SizedBox(height: 15),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: AppColors.borderColor,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [Text("Підписатися")],
+
+              BlocConsumer<FollowBloc, FollowState>(
+                listener: (context, state) {
+                  if (state is FollowError) {
+                    showSnackBar(context, state.message);
+                  } else if (state is FollowActionSuccess) {
+                    showSnackBar(context, state.message);
+                    context
+                        .read<FollowBloc>()
+                        .add(CheckIfFollowing(widget.user.id));
+                  }
+                },
+                builder: (context, state) {
+                  bool isFollowing = false;
+                  if (state is FollowStatus) {
+                    isFollowing = state.isFollowing;
+                  }
+
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (state is FollowLoading) return;
+                            if (isFollowing) {
+                              context
+                                  .read<FollowBloc>()
+                                  .add(UnfollowUser(widget.user.id));
+                            } else {
+                              context
+                                  .read<FollowBloc>()
+                                  .add(FollowUser(widget.user.id));
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isFollowing
+                                  ? Colors.red.withOpacity(0.1)
+                                  : AppColors.borderColor,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (state is FollowLoading)
+                                  const SizedBox(
+                                    height: 18,
+                                    width: 18,
+                                    child:
+                                        CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                else
+                                  Text(isFollowing
+                                      ? "Відписатися"
+                                      : "Підписатися"),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
+
               const SizedBox(height: 15),
+
+         
               BlocConsumer<BlogBloc, BlogState>(
                 listener: (context, state) {
                   if (state is BlogFailure) {
@@ -128,7 +184,7 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                         ),
                         const SizedBox(height: 10),
                         SizedBox(
-                          height: 400, // Виправлена висота
+                          height: 400,
                           child: GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -155,14 +211,13 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                                         listener: (context, newState) {
                                           if (newState is BlogLoaded) {
                                             Navigator.pop(context);
-
                                             NavigationService.push(
                                               context,
                                               DetailsBlogPage(
                                                 blog: blog,
-                                                isLiked: newState.likesCount !=
-                                                        null &&
-                                                    newState.likesCount! > 0,
+                                                isLiked:
+                                                    newState.likesCount != null &&
+                                                        newState.likesCount! > 0,
                                                 likesCount:
                                                     newState.likesCount ?? 0,
                                               ),

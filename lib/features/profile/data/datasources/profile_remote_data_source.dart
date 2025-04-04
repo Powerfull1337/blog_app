@@ -11,6 +11,9 @@ abstract interface class ProfileRemoteDataSource {
   Future<void> updateUserInformation({required UserModel user});
   Future<String> uploadProfileImage(
       {required File image, required UserModel user});
+  Future<void> followUser({required String userId});
+  Future<void> unfollowUser({required String userId});
+  Future<bool> isFollowing({required String userId});
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -18,8 +21,59 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   ProfileRemoteDataSourceImpl(this.supabaseClient);
 
-
   String? get currentUserId => supabaseClient.auth.currentUser?.id;
+
+  @override
+  Future<void> followUser({required String userId}) async {
+    try {
+      if (currentUserId == null) throw Exception("User is not logged in");
+
+      await supabaseClient.from('followers').insert({
+        'follower_id': currentUserId,
+        'following_id': userId,
+      });
+
+      log("Successfully followed user: $userId");
+    } catch (e) {
+      log("Error following user: $e");
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> unfollowUser({required String userId}) async {
+    try {
+      if (currentUserId == null) throw Exception("User is not logged in");
+
+      await supabaseClient
+          .from('followers')
+          .delete()
+          .match({'follower_id': currentUserId!, 'following_id': userId});
+
+      log("Successfully unfollowed user: $userId");
+    } catch (e) {
+      log("Error unfollowing user: $e");
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> isFollowing({required String userId}) async {
+    try {
+      if (currentUserId == null) throw Exception("User is not logged in");
+
+      final result = await supabaseClient
+          .from('followers')
+          .select('id')
+          .match({'follower_id': currentUserId!, 'following_id': userId})
+          .maybeSingle();
+
+      return result != null;
+    } catch (e) {
+      log("Error checking follow status: $e");
+      throw ServerException(e.toString());
+    }
+  }
 
   @override
   Future<UserModel> fetchUserInformation() async {
