@@ -12,4 +12,8 @@ class NavigationService {
       (route) => false,
     );
   }
+
+   static void pop(BuildContext context) {
+    Navigator.pop(context);
+  }
 }

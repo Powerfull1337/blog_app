@@ -3,7 +3,6 @@ import 'package:blog_app/core/network/connection_checker.dart';
 import 'package:blog_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:blog_app/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
-
 import 'package:blog_app/features/auth/domain/usecases/current_user.dart';
 import 'package:blog_app/features/auth/domain/usecases/user_login.dart';
 import 'package:blog_app/features/auth/domain/usecases/user_logout.dart';
@@ -13,9 +12,11 @@ import 'package:blog_app/features/blog/data/datasources/blog_local_data_source.d
 import 'package:blog_app/features/blog/data/datasources/blog_remote_data_source.dart';
 import 'package:blog_app/features/blog/data/repositories/blog_repository_impl.dart';
 import 'package:blog_app/features/blog/domain/repositories/blog_repository.dart';
-import 'package:blog_app/features/blog/domain/usecases/get_all_blogs.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_all_blogs_by_id.dart';
+import 'package:blog_app/features/blog/domain/usecases/get_blog_likes.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_count_blog.dart';
+import 'package:blog_app/features/blog/domain/usecases/like_blog.dart';
+import 'package:blog_app/features/blog/domain/usecases/unlike_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/profile/data/datasources/profile_remote_data_source.dart';
@@ -115,31 +116,10 @@ void _initBlog() {
 
     // Usecases
     ..registerFactory(
-      () => UploadBlog(
-        serviceLocator(),
-      ),
-    )
-    ..registerFactory(
-      () => GetAllBlogs(
-        serviceLocator(),
-      ),
-    )
-    ..registerFactory(
-      () => GetAllBlogsById(
-        serviceLocator(),
-      ),
-    )
-       ..registerFactory(
-      () => GetCountBlog(
-        serviceLocator(),
-      ),
-    )
-    ..registerFactory(
       () => GetUserInfo(
         serviceLocator(),
       ),
     )
-    
     ..registerFactory(
       () => UpdateUserInfo(
         serviceLocator(),
@@ -155,13 +135,52 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => UploadBlog(
+        serviceLocator(),
+      ),
+    )
+    // ..registerFactory(
+    //   () => GetAllBlogs(
+    //     serviceLocator(),
+    //   ),
+    // )
+    ..registerFactory(
+      () => GetAllBlogsById(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetCountBlog(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => LikeBlog(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => UnlikeBlog(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetBlogLikes(
+        serviceLocator(),
+      ),
+    )
+
     // Bloc
     ..registerLazySingleton(
       () => BlogBloc(
         uploadBlog: serviceLocator(),
-        getAllBlogs: serviceLocator(),
+        //    getAllBlogs: serviceLocator(),
         getAllBlogsById: serviceLocator(),
         getCountBlog: serviceLocator(),
+        unlikeBlog: serviceLocator(),
+        likeBlog: serviceLocator(),
+        getBlogLikesCount: serviceLocator(),
       ),
     )
     ..registerLazySingleton(

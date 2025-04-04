@@ -1,4 +1,3 @@
-
 import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -19,69 +18,95 @@ class MyBlogPage extends StatefulWidget {
 }
 
 class _MyBlogPageState extends State<MyBlogPage> {
-@override
-void initState() {
-  super.initState();
-  
-  final userState = context.read<AuthBloc>().state;
-  
-  if (userState is AuthSuccess) {
+  @override
+  void initState() {
+    super.initState();
 
-    final user = userState.user;
-    
-
-    context.read<BlogBloc>().add(BlogFetchAllBlogsById(userId:  user.id));
-  } 
-}
-
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = context.read<AuthBloc>().state;
+      if (authState is AuthSuccess) {
+        context
+            .read<BlogBloc>()
+            .add(BlogFetchAllBlogsById(userId: authState.user.id));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("My Blogs"),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () {
-                  NavigationService.push(context, const AddBlogPage());
-                },
-                icon: const Icon(CupertinoIcons.add))
-          ],
-        ),
-        body: BlocConsumer<BlogBloc, BlogState>(
-          listener: (context, state) {
-            if (state is BlogFailure) {
-              showSnackBar(context, state.error);
-            }
-          },
-          builder: (context, state) {
-            if (state is BlogLoading) {
-              return const Loader();
-            } else if (state is BlogsDisplaySuccess) {
-              return GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12.0,
-                  mainAxisSpacing: 12.0,
-                  childAspectRatio: 1,
-                ),
-                itemCount: state.blogs.length,
-                itemBuilder: (context, index) {
-                  final blog = state.blogs[index];
-                  return MyBlogCard(
-                      onTap: () {
-                        NavigationService.push(
-                            context, DetailsBlogPage(blog: blog));
+      appBar: AppBar(
+        title: const Text("My Blogs"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              NavigationService.push(context, const AddBlogPage());
+            },
+            icon: const Icon(CupertinoIcons.add),
+          ),
+        ],
+      ),
+      body: BlocConsumer<BlogBloc, BlogState>(
+        listener: (context, state) {
+          if (state is BlogFailure) {
+            showSnackBar(context, state.error);
+          }
+        },
+        builder: (context, state) {
+          if (state is BlogLoading) {
+            return const Loader();
+          } else if (state is BlogLoaded) {
+            return GridView.builder(
+              padding: const EdgeInsets.all(12.0),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12.0,
+                mainAxisSpacing: 12.0,
+                childAspectRatio: 1,
+              ),
+              itemCount: state.blogs.length,
+              itemBuilder: (context, index) {
+                final blog = state.blogs[index];
+                return MyBlogCard(
+                  onTap: () {
+                    /// ❗ Спочатку відправляємо подію для отримання лайків
+                    context.read<BlogBloc>().add(BlogFetchLikesCount(blogId: blog.id));
+
+                    /// ❗ Використовуємо BlocListener для обробки лайків перед переходом
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) {
+                        return BlocListener<BlogBloc, BlogState>(
+                          listener: (context, newState) {
+                            if (newState is BlogLoaded) {
+                              Navigator.pop(context); // Закриваємо діалог
+
+                              NavigationService.push(
+                                context,
+                                DetailsBlogPage(
+                                  blog: blog,
+                                  isLiked: newState.likesCount != null && newState.likesCount! > 0,
+                                  likesCount: newState.likesCount ?? 0,
+                                ),
+                              );
+                            }
+                          },
+                          child: const Center(child: Loader()),
+                        );
                       },
-                      title: blog.title,
-                      imageUrl: blog.imageUrl);
-                },
-              );
-            }
-            return const SizedBox();
-          },
-        ));
+                    );
+                  },
+                  title: blog.title,
+                  imageUrl: blog.imageUrl,
+                );
+              },
+            );
+          }
+          return const Center(child: Text("No blogs available"));
+        },
+      ),
+    );
   }
 }

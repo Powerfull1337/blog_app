@@ -13,8 +13,13 @@ abstract interface class BlogRepository {
     required List<String> topics,
   });
 
-  Future<Either<Failure, List<Blog>>> getAllBlogs();
+  //Future<Either<Failure, List<Blog>>> getAllBlogs();
   Future<Either<Failure, List<Blog>>> getAllBlogsById({required String userId});
 
   Future<Either<Failure, int>> getCountBlog({required String userId});
+
+  Future<Either<Failure, void>> likeBlog({required String blogId, required String userId});
+  Future<Either<Failure, void>> unlikeBlog({required String blogId, required String userId});
+  Future<Either<Failure, bool>> isBlogLiked({required String blogId, required String userId});
+  Future<Either<Failure, int>> getBlogLikesCount({required String blogId});
 }

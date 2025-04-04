@@ -23,6 +23,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+
+
+  
   @override
   void initState() {
     super.initState();
@@ -102,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         BlocBuilder<BlogBloc, BlogState>(
                           builder: (context, blogState) {
-                            if (blogState is BlogsDisplaySuccess) {
+                            if (blogState is BlogLoaded) {
                               final blogCount = blogState.blogs.length;
                               return GestureDetector(
                                 onTap: () {

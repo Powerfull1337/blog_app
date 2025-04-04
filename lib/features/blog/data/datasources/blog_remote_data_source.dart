@@ -8,10 +8,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract interface class BlogRemoteDataSource {
   Future<BlogModel> uploadBlog(BlogModel blog);
   Future<int> getCountBlog(String userId);
+ // Future<List<BlogModel>> getAllBlogs();
+  Future<List<BlogModel>> getAllBlogsById(String userId);
+
   Future<String> uploadBlogImage(
       {required File image, required BlogModel blog});
-  Future<List<BlogModel>> getAllBlogs();
-  Future<List<BlogModel>> getAllBlogsById(String userId);
+
+  Future<void> likeBlog(String blogId, String userId);
+  Future<void> unlikeBlog(String blogId, String userId);
+  Future<bool> isBlogLiked(String blogId, String userId);
+  Future<int> getBlogLikesCount(String blogId);
 }
 
 class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
@@ -47,25 +53,25 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
     }
   }
 
-  @override
-  Future<List<BlogModel>> getAllBlogs() async {
-    try {
-      final blogs =
-          await supabaseClient.from('blogs').select('*, profiles (name)');
+  // @override
+  // Future<List<BlogModel>> getAllBlogs() async {
+  //   try {
+  //     final blogs =
+  //         await supabaseClient.from('blogs').select('*, profiles (name)');
 
-      return blogs
-          .map(
-            (blog) => BlogModel.fromJson(blog).copyWith(
-              posterName: blog['profiles']['name'],
-            ),
-          )
-          .toList();
-    } on PostgrestException catch (e) {
-      throw ServerException(e.message);
-    } catch (e) {
-      throw ServerException(e.toString());
-    }
-  }
+  //     return blogs
+  //         .map(
+  //           (blog) => BlogModel.fromJson(blog).copyWith(
+  //             posterName: blog['profiles']['name'],
+  //           ),
+  //         )
+  //         .toList();
+  //   } on PostgrestException catch (e) {
+  //     throw ServerException(e.message);
+  //   } catch (e) {
+  //     throw ServerException(e.toString());
+  //   }
+  // }
 
   @override
   Future<List<BlogModel>> getAllBlogsById(String userId) async {
@@ -90,19 +96,75 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       throw ServerException(e.toString());
     }
   }
-@override
-Future<int> getCountBlog(String userId) async {
-  try {
-    final blogs = await supabaseClient
-    .from('blogs')
-    .select('id')
-    .eq('poster_id', userId);
 
-return blogs.length;
-  } catch (e) {
-    log(e.toString());
-    throw ServerException(e.toString());
+  @override
+  Future<int> getCountBlog(String userId) async {
+    try {
+      final blogs = await supabaseClient
+          .from('blogs')
+          .select('id')
+          .eq('poster_id', userId);
+
+      return blogs.length;
+    } catch (e) {
+      log(e.toString());
+      throw ServerException(e.toString());
+    }
   }
-}
 
+  @override
+  Future<void> likeBlog(String blogId, String userId) async {
+    try {
+      await supabaseClient.from('blog_likes').insert({
+        'blog_id': blogId,
+        'user_id': userId,
+      });
+    } on PostgrestException catch (e) {
+      log(e.toString());
+      throw ServerException(e.message);
+    }
+  }
+
+  @override
+  Future<void> unlikeBlog(String blogId, String userId) async {
+    try {
+      await supabaseClient
+          .from('blog_likes')
+          .delete()
+          .match({'blog_id': blogId, 'user_id': userId});
+    } on PostgrestException catch (e) {
+      log(e.toString());
+      throw ServerException(e.message);
+    }
+  }
+
+  @override
+  Future<bool> isBlogLiked(String blogId, String userId) async {
+    try {
+      final response = await supabaseClient
+          .from('blog_likes')
+          .select('id')
+          .match({'blog_id': blogId, 'user_id': userId});
+
+      return response.isNotEmpty;
+    } on PostgrestException catch (e) {
+      log(e.toString());
+      throw ServerException(e.message);
+    }
+  }
+
+  @override
+  Future<int> getBlogLikesCount(String blogId) async {
+    try {
+      final response = await supabaseClient
+          .from('blog_likes')
+          .select('id')
+          .eq('blog_id', blogId);
+
+      return response.length;
+    } on PostgrestException catch (e) {
+      log(e.toString());
+      throw ServerException(e.message);
+    }
+  }
 }

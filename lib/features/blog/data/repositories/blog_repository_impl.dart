@@ -56,21 +56,21 @@ class BlogRepositoryImpl implements BlogRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, List<Blog>>> getAllBlogs() async {
-    try {
-      if (!await (connectionChecker.isConnected)) {
-        final blogs = await blogLocalDataSource.loadBlogs();
-        return right(blogs);
-      }
+  // @override
+  // Future<Either<Failure, List<Blog>>> getAllBlogs() async {
+  //   try {
+  //     if (!await (connectionChecker.isConnected)) {
+  //       final blogs = await blogLocalDataSource.loadBlogs();
+  //       return right(blogs);
+  //     }
 
-      final blogs = await blogRemoteDataSource.getAllBlogs();
-      blogLocalDataSource.uploadLocalBlogs(blogs: blogs);
-      return right(blogs);
-    } on ServerException catch (e) {
-      return left(Failure(e.toString()));
-    }
-  }
+  //     final blogs = await blogRemoteDataSource.getAllBlogs();
+  //     blogLocalDataSource.uploadLocalBlogs(blogs: blogs);
+  //     return right(blogs);
+  //   } on ServerException catch (e) {
+  //     return left(Failure(e.toString()));
+  //   }
+  // }
 
   @override
   Future<Either<Failure, List<Blog>>> getAllBlogsById(
@@ -97,6 +97,58 @@ class BlogRepositoryImpl implements BlogRepository {
       }
       final count = await blogRemoteDataSource.getCountBlog(userId);
       log("Fetched count: $count");
+      return right(count);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+   @override
+  Future<Either<Failure, void>> likeBlog({required String blogId, required String userId}) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(MessageConstants.noInternetConnection));
+      }
+      await blogRemoteDataSource.likeBlog(blogId, userId);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> unlikeBlog({required String blogId, required String userId}) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(MessageConstants.noInternetConnection));
+      }
+      await blogRemoteDataSource.unlikeBlog(blogId, userId);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> isBlogLiked({required String blogId, required String userId}) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(MessageConstants.noInternetConnection));
+      }
+      final isLiked = await blogRemoteDataSource.isBlogLiked(blogId, userId);
+      return right(isLiked);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> getBlogLikesCount({required String blogId}) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(MessageConstants.noInternetConnection));
+      }
+      final count = await blogRemoteDataSource.getBlogLikesCount(blogId);
       return right(count);
     } on ServerException catch (e) {
       return left(Failure(e.toString()));

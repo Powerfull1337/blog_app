@@ -9,21 +9,27 @@ final class BlogLoading extends BlogState {}
 
 final class BlogUploadSuccess extends BlogState {}
 
-final class BlogsDisplaySuccess extends BlogState {
-
- final List<Blog> blogs;
-
-  BlogsDisplaySuccess(this.blogs); 
-}
-
-final class BlogCountSuccess extends BlogState {
-  final int count;
-
-  BlogCountSuccess(this.count);
-}
-
 final class BlogFailure extends BlogState {
   final String error;
-
   BlogFailure(this.error);
+}
+
+final class BlogLoaded extends BlogState {
+  final List<Blog> blogs;
+  final int? blogCount;
+  final int? likesCount;
+
+  BlogLoaded({required this.blogs, this.blogCount, this.likesCount});
+
+  BlogLoaded copyWith({
+    List<Blog>? blogs,
+    int? blogCount,
+    int? likesCount,
+  }) {
+    return BlogLoaded(
+      blogs: blogs ?? this.blogs,
+      blogCount: blogCount ?? this.blogCount,
+      likesCount: likesCount ?? this.likesCount,
+    );
+  }
 }

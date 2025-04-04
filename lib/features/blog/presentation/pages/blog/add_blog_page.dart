@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:blog_app/core/common/cubits/app_user/app_user_cubit.dart';
-import 'package:blog_app/core/common/pages/home_page.dart';
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/image_picker.dart';
 import 'package:blog_app/core/utils/navigation_service.dart';
@@ -70,7 +69,10 @@ class _AddBlogPageState extends State<AddBlogPage> {
           if (state is BlogFailure) {
             showSnackBar(context, state.error);
           } else if (state is BlogUploadSuccess) {
-            NavigationService.pushAndRemoveUntil(context, const HomePage());
+            final userId =
+                (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
+            context.read<BlogBloc>().add(BlogFetchAllBlogsById(userId: userId));
+            NavigationService.pop(context);
           }
         },
         builder: (context, state) {

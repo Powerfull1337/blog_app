@@ -22,8 +22,12 @@ class AnotherUserPage extends StatefulWidget {
 class _AnotherUserPageState extends State<AnotherUserPage> {
   @override
   void initState() {
-    context.read<BlogBloc>().add(BlogFetchAllBlogsById(userId: widget.user.id));
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context
+          .read<BlogBloc>()
+          .add(BlogFetchAllBlogsById(userId: widget.user.id));
+    });
   }
 
   @override
@@ -47,7 +51,6 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                     radius: 50,
                     backgroundImage: NetworkImage(widget.user.avatarUrl),
                   ),
-                  const SizedBox(width: 15),
                   const Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -60,22 +63,9 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                                   fontSize: 18, fontWeight: FontWeight.w500),
                             ),
                             SizedBox(height: 5),
-                            Text("Блогів"),
-                          ],
-                        ),
-                        SizedBox(width: 15),
-                        Column(
-                          children: [
-                            Text(
-                              "100",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
-                            ),
-                            SizedBox(height: 5),
                             Text("Читачів"),
                           ],
                         ),
-                        SizedBox(width: 15),
                         Column(
                           children: [
                             Text(
@@ -100,43 +90,20 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
               Row(
                 children: [
                   Expanded(
-                    flex: 1,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.borderColor,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Text("Підписатися")],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.borderColor,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Text("Підписатися")],
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppColors.borderColor,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [Text("Підписатися")],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    "Blogs",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -150,33 +117,72 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                 builder: (context, state) {
                   if (state is BlogLoading) {
                     return const Loader();
-                  } else if (state is BlogsDisplaySuccess) {
-                    return SizedBox(
-                      height: 400,
-                      child: GridView.builder(
-                        itemCount: state.blogs.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 4.0,
-                          childAspectRatio: 0.7,
+                  } else if (state is BlogLoaded) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Blogs ${state.blogs.length}",
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        itemBuilder: (context, index) {
-                          final blog = state.blogs[index];
-                          return MyBlogCard(
-                            onTap: () {
-                              NavigationService.push(
-                                  context, DetailsBlogPage(blog: blog));
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 400, // Виправлена висота
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: state.blogs.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 8.0,
+                              mainAxisSpacing: 4.0,
+                              childAspectRatio: 0.7,
+                            ),
+                            itemBuilder: (context, index) {
+                              final blog = state.blogs[index];
+                              return MyBlogCard(
+                                onTap: () {
+                                  context.read<BlogBloc>().add(
+                                      BlogFetchLikesCount(blogId: blog.id));
+
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) {
+                                      return BlocListener<BlogBloc, BlogState>(
+                                        listener: (context, newState) {
+                                          if (newState is BlogLoaded) {
+                                            Navigator.pop(context);
+
+                                            NavigationService.push(
+                                              context,
+                                              DetailsBlogPage(
+                                                blog: blog,
+                                                isLiked: newState.likesCount !=
+                                                        null &&
+                                                    newState.likesCount! > 0,
+                                                likesCount:
+                                                    newState.likesCount ?? 0,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: const Center(child: Loader()),
+                                      );
+                                    },
+                                  );
+                                },
+                                title: blog.title,
+                                imageUrl: blog.imageUrl,
+                              );
                             },
-                            title: blog.title,
-                            imageUrl: blog.imageUrl,
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                      ],
                     );
                   }
-
                   return const SizedBox();
                 },
               ),
