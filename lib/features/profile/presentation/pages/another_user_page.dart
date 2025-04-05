@@ -1,22 +1,19 @@
-
-
+import 'package:blog_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:blog_app/core/theme/app_colors.dart';
 import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/features/auth/domain/entities/user.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
+import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/widgets/my_blog_card.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../bloc/follow/follow_bloc.dart';
 
 class AnotherUserPage extends StatefulWidget {
   const AnotherUserPage({super.key, required this.user});
-
   final User user;
 
   @override
@@ -24,17 +21,20 @@ class AnotherUserPage extends StatefulWidget {
 }
 
 class _AnotherUserPageState extends State<AnotherUserPage> {
+  late String currentUserId;
+
   @override
   void initState() {
     super.initState();
+
+    currentUserId =
+        (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context
           .read<BlogBloc>()
           .add(BlogFetchAllBlogsById(userId: widget.user.id));
-
-      context
-          .read<FollowBloc>()
-          .add(CheckIfFollowing(widget.user.id));
+      context.read<FollowBloc>().add(CheckIfFollowing(widget.user.id));
     });
   }
 
@@ -65,22 +65,18 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                       children: [
                         Column(
                           children: [
-                            Text(
-                              "100",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
-                            ),
+                            Text("100",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500)),
                             SizedBox(height: 5),
                             Text("Читачів"),
                           ],
                         ),
                         Column(
                           children: [
-                            Text(
-                              "100",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
-                            ),
+                            Text("100",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500)),
                             SizedBox(height: 5),
                             Text("Відстежує"),
                           ],
@@ -95,7 +91,6 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                   textAlign: TextAlign.justify,
                   style: const TextStyle(color: AppColors.greyColor)),
               const SizedBox(height: 15),
-
               BlocConsumer<FollowBloc, FollowState>(
                 listener: (context, state) {
                   if (state is FollowError) {
@@ -144,8 +139,8 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                                   const SizedBox(
                                     height: 18,
                                     width: 18,
-                                    child:
-                                        CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
                                   )
                                 else
                                   Text(isFollowing
@@ -160,10 +155,7 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                   );
                 },
               ),
-
               const SizedBox(height: 15),
-
-         
               BlocConsumer<BlogBloc, BlogState>(
                 listener: (context, state) {
                   if (state is BlogFailure) {
@@ -198,30 +190,35 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
                             ),
                             itemBuilder: (context, index) {
                               final blog = state.blogs[index];
+
                               return MyBlogCard(
                                 onTap: () {
-                                  context.read<BlogBloc>().add(
-                                      BlogFetchLikesCount(blogId: blog.id));
-
                                   showDialog(
                                     context: context,
                                     barrierDismissible: false,
                                     builder: (context) {
-                                      return BlocListener<BlogBloc, BlogState>(
-                                        listener: (context, newState) {
-                                          if (newState is BlogLoaded) {
+                                      context
+                                          .read<LikeBloc>()
+                                          .add(FetchLikeInfo(
+                                            blogId: blog.id,
+                                            userId: currentUserId,
+                                          ));
+                                      return BlocListener<LikeBloc, LikeState>(
+                                        listener: (context, likeState) {
+                                          if (likeState is LikeLoaded) {
                                             Navigator.pop(context);
                                             NavigationService.push(
                                               context,
                                               DetailsBlogPage(
                                                 blog: blog,
-                                                isLiked:
-                                                    newState.likesCount != null &&
-                                                        newState.likesCount! > 0,
-                                                likesCount:
-                                                    newState.likesCount ?? 0,
+                                                isLiked: likeState.isLiked,
+                                                likesCount: likeState.count,
                                               ),
                                             );
+                                          } else if (likeState is LikeError) {
+                                            Navigator.pop(context);
+                                            showSnackBar(
+                                                context, likeState.message);
                                           }
                                         },
                                         child: const Center(child: Loader()),

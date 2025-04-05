@@ -15,10 +15,12 @@ import 'package:blog_app/features/blog/domain/repositories/blog_repository.dart'
 import 'package:blog_app/features/blog/domain/usecases/get_all_blogs_by_id.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_blog_likes.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_count_blog.dart';
+import 'package:blog_app/features/blog/domain/usecases/is_blog_liked.dart';
 import 'package:blog_app/features/blog/domain/usecases/like_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/unlike_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
+import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
 import 'package:blog_app/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:blog_app/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:blog_app/features/profile/domain/repository/profile_repostitory.dart';
@@ -119,6 +121,8 @@ void _initBlog() {
     )
 
     // Usecases
+
+    // User
     ..registerFactory(
       () => GetUserInfo(
         serviceLocator(),
@@ -159,6 +163,8 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+
+    // Likes
     ..registerFactory(
       () => LikeBlog(
         serviceLocator(),
@@ -174,6 +180,13 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => IsBlogLiked(
+        serviceLocator(),
+      ),
+    )
+
+    //Follow
     ..registerFactory(
       () => FollowToUser(
         serviceLocator(),
@@ -197,9 +210,6 @@ void _initBlog() {
         //    getAllBlogs: serviceLocator(),
         getAllBlogsById: serviceLocator(),
         getCountBlog: serviceLocator(),
-        unlikeBlog: serviceLocator(),
-        likeBlog: serviceLocator(),
-        getBlogLikesCount: serviceLocator(),
       ),
     )
     ..registerLazySingleton(
@@ -214,6 +224,14 @@ void _initBlog() {
         isFollowing: serviceLocator(),
         subscribeToUser: serviceLocator(),
         unSubscribeToUser: serviceLocator(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => LikeBloc(
+        unlikeBlog: serviceLocator(),
+        likeBlog: serviceLocator(),
+        getBlogLikes: serviceLocator(),
+        isBlogLiked: serviceLocator(),
       ),
     );
 }

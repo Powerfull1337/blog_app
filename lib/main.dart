@@ -3,6 +3,7 @@ import 'package:blog_app/core/common/pages/home_page.dart';
 import 'package:blog_app/core/theme/app_theme.dart';
 import 'package:blog_app/features/auth/presentation/pages/auth/login_page.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
+import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
 import 'package:blog_app/features/profile/presentation/bloc/follow/follow_bloc.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:blog_app/init_dependencies.dart';
@@ -30,6 +31,9 @@ void main() async {
       ),
       BlocProvider(
         create: (_) => serviceLocator<FollowBloc>(),
+      ),
+      BlocProvider(
+        create: (_) => serviceLocator<LikeBloc>(),
       ),
     ],
     child: const MyApp(),

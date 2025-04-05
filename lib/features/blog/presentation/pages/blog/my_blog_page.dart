@@ -1,6 +1,7 @@
 import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/add_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
@@ -70,33 +71,39 @@ class _MyBlogPageState extends State<MyBlogPage> {
                 final blog = state.blogs[index];
                 return MyBlogCard(
                   onTap: () {
-                    /// ❗ Спочатку відправляємо подію для отримання лайків
-                    context.read<BlogBloc>().add(BlogFetchLikesCount(blogId: blog.id));
+                    final authState = context.read<AuthBloc>().state;
+                    if (authState is AuthSuccess) {
+                      final userId = authState.user.id;
+                      context
+                          .read<LikeBloc>()
+                          .add(FetchLikeInfo(blogId: blog.id, userId: userId));
 
-                    /// ❗ Використовуємо BlocListener для обробки лайків перед переходом
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) {
-                        return BlocListener<BlogBloc, BlogState>(
-                          listener: (context, newState) {
-                            if (newState is BlogLoaded) {
-                              Navigator.pop(context); // Закриваємо діалог
-
-                              NavigationService.push(
-                                context,
-                                DetailsBlogPage(
-                                  blog: blog,
-                                  isLiked: newState.likesCount != null && newState.likesCount! > 0,
-                                  likesCount: newState.likesCount ?? 0,
-                                ),
-                              );
-                            }
-                          },
-                          child: const Center(child: Loader()),
-                        );
-                      },
-                    );
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return BlocListener<LikeBloc, LikeState>(
+                            listener: (context, likeState) {
+                              if (likeState is LikeLoaded) {
+                                Navigator.pop(context);
+                                NavigationService.push(
+                                  context,
+                                  DetailsBlogPage(
+                                    blog: blog,
+                                    isLiked: likeState.isLiked,
+                                    likesCount: likeState.count,
+                                  ),
+                                );
+                              } else if (likeState is LikeError) {
+                                Navigator.pop(context);
+                                showSnackBar(context, likeState.message);
+                              }
+                            },
+                            child: const Center(child: Loader()),
+                          );
+                        },
+                      );
+                    }
                   },
                   title: blog.title,
                   imageUrl: blog.imageUrl,

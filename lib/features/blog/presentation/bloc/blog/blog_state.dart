@@ -17,19 +17,19 @@ final class BlogFailure extends BlogState {
 final class BlogLoaded extends BlogState {
   final List<Blog> blogs;
   final int? blogCount;
-  final int? likesCount;
 
-  BlogLoaded({required this.blogs, this.blogCount, this.likesCount});
+  BlogLoaded({
+    required this.blogs,
+    this.blogCount,
+  });
 
   BlogLoaded copyWith({
     List<Blog>? blogs,
     int? blogCount,
-    int? likesCount,
   }) {
     return BlogLoaded(
       blogs: blogs ?? this.blogs,
       blogCount: blogCount ?? this.blogCount,
-      likesCount: likesCount ?? this.likesCount,
     );
   }
 }

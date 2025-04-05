@@ -1,7 +1,6 @@
-
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/blog/domain/entities/blog.dart';
-import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
+import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,7 +32,7 @@ class _DetailsBlogPageState extends State<DetailsBlogPage> {
   }
 
   void toggleLike() {
-    final blogBloc = context.read<BlogBloc>();
+    final likeBloc = context.read<LikeBloc>();
     final userState = context.read<AuthBloc>().state;
 
     if (userState is AuthSuccess) {
@@ -45,9 +44,9 @@ class _DetailsBlogPageState extends State<DetailsBlogPage> {
       });
 
       if (isLiked) {
-        blogBloc.add(BlogLike(blogId: widget.blog.id, userId: userId));
+        likeBloc.add(LikeBlogEvent(blogId: widget.blog.id, userId: userId));
       } else {
-        blogBloc.add(BlogUnlike(blogId: widget.blog.id, userId: userId));
+        likeBloc.add(UnlikeBlogEvent(blogId: widget.blog.id, userId: userId));
       }
     }
   }
@@ -102,7 +101,10 @@ class _DetailsBlogPageState extends State<DetailsBlogPage> {
             const SizedBox(height: 30),
             Text(
               widget.blog.content,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey),
             ),
           ],
         ),

@@ -19,31 +19,7 @@ final class BlogUpload extends BlogEvent {
   });
 }
 
-final class BlogFetchAllBlogs extends BlogEvent {}
-
 final class BlogFetchAllBlogsById extends BlogEvent {
   final String userId;
   BlogFetchAllBlogsById({required this.userId});
-}
-
-final class BlogFetchCount extends BlogEvent {
-  final String userId;
-  BlogFetchCount({required this.userId});
-}
-
-final class BlogLike extends BlogEvent {
-  final String blogId;
-  final String userId;
-  BlogLike({required this.blogId, required this.userId});
-}
-
-final class BlogUnlike extends BlogEvent {
-  final String blogId;
-  final String userId;
-  BlogUnlike({required this.blogId, required this.userId});
-}
-
-final class BlogFetchLikesCount extends BlogEvent {
-  final String blogId;
-  BlogFetchLikesCount({required this.blogId});
 }

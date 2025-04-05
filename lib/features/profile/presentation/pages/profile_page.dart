@@ -23,10 +23,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
-
-
-  
   @override
   void initState() {
     super.initState();
@@ -54,7 +50,9 @@ class _ProfilePageState extends State<ProfilePage> {
             return const Loader();
           } else if (state is ProfileLoaded) {
             final user = state.user;
-            context.read<BlogBloc>().add(BlogFetchAllBlogsById(userId: user.id));
+            context
+                .read<BlogBloc>()
+                .add(BlogFetchAllBlogsById(userId: user.id));
 
             return SafeArea(
               child: Padding(
