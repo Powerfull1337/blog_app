@@ -1,86 +1,115 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:blog_app/features/blog/domain/usecases/like_blog.dart';
-import 'package:blog_app/features/blog/domain/usecases/unlike_blog.dart';
+import 'dart:developer';
+
+import 'package:equatable/equatable.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_blog_likes.dart';
 import 'package:blog_app/features/blog/domain/usecases/is_blog_liked.dart';
+import 'package:blog_app/features/blog/domain/usecases/like_blog.dart';
+import 'package:blog_app/features/blog/domain/usecases/unlike_blog.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'like_event.dart';
 part 'like_state.dart';
 
 class LikeBloc extends Bloc<LikeEvent, LikeState> {
-  final LikeBlog _likeBlog;
-  final UnlikeBlog _unlikeBlog;
-  final GetBlogLikes _getBlogLikes;
-  final IsBlogLiked _isBlogLiked;
+  final LikeBlog likeBlogUseCase;
+  final UnlikeBlog unlikeBlogUseCase;
+  final IsBlogLiked isBlogLikedUseCase;
+  final GetBlogLikes getBlogLikesUseCase;
 
   LikeBloc({
-    required LikeBlog likeBlog,
-    required UnlikeBlog unlikeBlog,
-    required GetBlogLikes getBlogLikes,
-    required IsBlogLiked isBlogLiked,
-  })  : _likeBlog = likeBlog,
-        _unlikeBlog = unlikeBlog,
-        _getBlogLikes = getBlogLikes,
-        _isBlogLiked = isBlogLiked,
-        super(LikeInitial()) {
-    on<LikeBlogEvent>(_onLike);
-    on<UnlikeBlogEvent>(_onUnlike);
-    on<FetchLikeCountEvent>(_onFetchCount);
-    on<FetchLikeInfo>(_onFetchLikeInfo);
+    required this.likeBlogUseCase,
+    required this.unlikeBlogUseCase,
+    required this.isBlogLikedUseCase,
+    required this.getBlogLikesUseCase,
+  }) : super(const LikeState()) {
+    on<LikeBlogEvent>(_onLikeBlog);
+    on<UnlikeBlogEvent>(_onUnlikeBlog);
+    on<CheckIfBlogLikedEvent>(_onCheckIfLiked);
+    on<GetLikesCountEvent>(_onGetLikesCount);
+    on<InitializeLikeStateEvent>(_onInitializeLikeState);
+    on<ResetLikeStateEvent>((event, emit) {
+      emit(const LikeState());
+    });
   }
 
-  Future<void> _onLike(LikeBlogEvent event, Emitter<LikeState> emit) async {
-    final res = await _likeBlog(LikeBlogParams(
-      blogId: event.blogId,
-      userId: event.userId,
-    ));
-    res.fold(
-      (l) => emit(LikeError(l.message)),
-      (_) => add(FetchLikeInfo(blogId: event.blogId, userId: event.userId)),
+  Future<void> _onLikeBlog(LikeBlogEvent event, Emitter<LikeState> emit) async {
+    final result = await likeBlogUseCase(
+      LikeBlogParams(blogId: event.blogId, userId: event.userId),
+    );
+
+    result.fold(
+      (failure) {
+        // handle error if needed
+      },
+      (_) {
+        emit(
+          state.copyWith(
+            isLiked: true,
+            likesCount: state.likesCount + 1,
+          ),
+        );
+      },
     );
   }
 
-  Future<void> _onUnlike(UnlikeBlogEvent event, Emitter<LikeState> emit) async {
-    final res = await _unlikeBlog(UnlikeBlogParams(
-      blogId: event.blogId,
-      userId: event.userId,
-    ));
-    res.fold(
-      (l) => emit(LikeError(l.message)),
-      (_) => add(FetchLikeInfo(blogId: event.blogId, userId: event.userId)),
+  Future<void> _onUnlikeBlog(
+      UnlikeBlogEvent event, Emitter<LikeState> emit) async {
+    final result = await unlikeBlogUseCase(
+      UnlikeBlogParams(blogId: event.blogId, userId: event.userId),
+    );
+
+    result.fold(
+      (failure) {
+        log(failure.toString());
+      },
+      (_) {
+        emit(
+          state.copyWith(
+            isLiked: false,
+            likesCount: (state.likesCount > 0) ? state.likesCount - 1 : 0,
+          ),
+        );
+      },
     );
   }
 
-  Future<void> _onFetchCount(FetchLikeCountEvent event, Emitter<LikeState> emit) async {
-    final res = await _getBlogLikes(GetBlogLikesParams(blogId: event.blogId));
-    res.fold(
-      (l) => emit(LikeError(l.message)),
-      (count) => emit(LikeCountUpdated(count)),
+  Future<void> _onCheckIfLiked(
+      CheckIfBlogLikedEvent event, Emitter<LikeState> emit) async {
+    final result = await isBlogLikedUseCase(
+      IsBlogLikedParams(blogId: event.blogId, userId: event.userId),
+    );
+
+    result.fold(
+      (failure) {
+        emit(state.copyWith(isLiked: false)); // <- emit навіть при помилці
+      },
+      (isLiked) {
+        emit(state.copyWith(isLiked: isLiked));
+      },
     );
   }
 
-  Future<void> _onFetchLikeInfo(FetchLikeInfo event, Emitter<LikeState> emit) async {
-    emit(LikeLoading());
+  Future<void> _onGetLikesCount(
+      GetLikesCountEvent event, Emitter<LikeState> emit) async {
+    final result = await getBlogLikesUseCase(
+      GetBlogLikesParams(blogId: event.blogId),
+    );
 
-    final countRes = await _getBlogLikes(GetBlogLikesParams(blogId: event.blogId));
-    final likedRes = await _isBlogLiked(IsBlogLikedParams(
-      blogId: event.blogId,
-      userId: event.userId,
+    result.fold(
+      (failure) {
+        emit(state.copyWith(likesCount: 0)); // <- emit навіть при помилці
+      },
+      (count) {
+        emit(state.copyWith(likesCount: count));
+      },
+    );
+  }
+
+  void _onInitializeLikeState(
+      InitializeLikeStateEvent event, Emitter<LikeState> emit) {
+    emit(state.copyWith(
+      isLiked: event.isLiked,
+      likesCount: event.likesCount,
     ));
-
-    final count = await countRes.fold((l) {
-      emit(LikeError(l.message));
-      return null;
-    }, (r) => r);
-
-    final isLiked = await likedRes.fold((l) {
-      emit(LikeError(l.message));
-      return null;
-    }, (r) => true);
-
-    if (count != null && isLiked != null) {
-      emit(LikeLoaded(count: count, isLiked: isLiked));
-    }
   }
 }

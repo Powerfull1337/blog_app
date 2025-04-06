@@ -16,7 +16,7 @@ abstract interface class BlogRemoteDataSource {
 
   Future<void> likeBlog(String blogId, String userId);
   Future<void> unlikeBlog(String blogId, String userId);
-  Future<bool> isBlogLiked(String blogId, String userId);
+  Future<bool> isBlogLikedByUser(String blogId, String userId);
   Future<int> getBlogLikesCount(String blogId);
 }
 
@@ -139,7 +139,7 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   }
 
   @override
-  Future<bool> isBlogLiked(String blogId, String userId) async {
+  Future<bool> isBlogLikedByUser(String blogId, String userId) async {
     try {
       final response = await supabaseClient
           .from('blog_likes')

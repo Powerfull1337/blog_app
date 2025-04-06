@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blog_app/features/blog/domain/entities/blog.dart';
 import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/add_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
@@ -19,6 +22,18 @@ class MyBlogPage extends StatefulWidget {
 }
 
 class _MyBlogPageState extends State<MyBlogPage> {
+  bool _likeReceived = false;
+  bool _countReceived = false;
+  bool _isLiked = false;
+  int _likesCount = 0;
+
+  void _resetLikeState() {
+    _likeReceived = false;
+    _countReceived = false;
+    _isLiked = false;
+    _likesCount = 0;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +46,27 @@ class _MyBlogPageState extends State<MyBlogPage> {
             .add(BlogFetchAllBlogsById(userId: authState.user.id));
       }
     });
+  }
+
+  void _handleLikeBlocListener(
+      BuildContext context, LikeState likeState, Blog blog) {
+    _isLiked = likeState.isLiked;
+    _likesCount = likeState.likesCount;
+
+    _likeReceived = true;
+    _countReceived = true;
+
+    if (_likeReceived && _countReceived) {
+      Navigator.pop(context);
+      NavigationService.push(
+        context,
+        DetailsBlogPage(
+          blog: blog,
+          isLiked: _isLiked,
+          likesCount: _likesCount,
+        ),
+      );
+    }
   }
 
   @override
@@ -61,22 +97,29 @@ class _MyBlogPageState extends State<MyBlogPage> {
             return GridView.builder(
               padding: const EdgeInsets.all(12.0),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12.0,
-                mainAxisSpacing: 12.0,
-                childAspectRatio: 1,
+                crossAxisCount: 3,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
+                childAspectRatio: 0.8,
               ),
               itemCount: state.blogs.length,
               itemBuilder: (context, index) {
                 final blog = state.blogs[index];
+
                 return MyBlogCard(
                   onTap: () {
                     final authState = context.read<AuthBloc>().state;
                     if (authState is AuthSuccess) {
                       final userId = authState.user.id;
+                      _resetLikeState();
+
+                      context.read<LikeBloc>().add(const ResetLikeStateEvent());
+
+                      context.read<LikeBloc>().add(CheckIfBlogLikedEvent(
+                          blogId: blog.id, userId: userId));
                       context
                           .read<LikeBloc>()
-                          .add(FetchLikeInfo(blogId: blog.id, userId: userId));
+                          .add(GetLikesCountEvent(blogId: blog.id));
 
                       showDialog(
                         context: context,
@@ -84,20 +127,8 @@ class _MyBlogPageState extends State<MyBlogPage> {
                         builder: (context) {
                           return BlocListener<LikeBloc, LikeState>(
                             listener: (context, likeState) {
-                              if (likeState is LikeLoaded) {
-                                Navigator.pop(context);
-                                NavigationService.push(
-                                  context,
-                                  DetailsBlogPage(
-                                    blog: blog,
-                                    isLiked: likeState.isLiked,
-                                    likesCount: likeState.count,
-                                  ),
-                                );
-                              } else if (likeState is LikeError) {
-                                Navigator.pop(context);
-                                showSnackBar(context, likeState.message);
-                              }
+                              log("LikeBloc State updated: isLiked=${likeState.isLiked}, count=${likeState.likesCount}");
+                              _handleLikeBlocListener(context, likeState, blog);
                             },
                             child: const Center(child: Loader()),
                           );

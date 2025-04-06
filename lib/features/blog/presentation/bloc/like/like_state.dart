@@ -1,27 +1,34 @@
 part of 'like_bloc.dart';
 
-@immutable
-abstract class LikeState {}
-
-class LikeInitial extends LikeState {}
-
-class LikeLoading extends LikeState {}
-
-class LikeCountUpdated extends LikeState {
-  final int count;
-
-  LikeCountUpdated(this.count);
-}
-
-class LikeLoaded extends LikeState {
-  final int count;
+class LikeState extends Equatable {
   final bool isLiked;
+  final int likesCount;
 
-  LikeLoaded({required this.count, required this.isLiked});
+  const LikeState({
+    this.isLiked = false,
+    this.likesCount = 0,
+  });
+
+  LikeState copyWith({
+    bool? isLiked,
+    int? likesCount,
+  }) {
+    return LikeState(
+      isLiked: isLiked ?? this.isLiked,
+      likesCount: likesCount ?? this.likesCount,
+    );
+  }
+
+  @override
+  List<Object> get props => [isLiked, likesCount];
 }
 
-class LikeError extends LikeState {
-  final String message;
+class InitializeLikeStateEvent extends LikeEvent {
+  final bool isLiked;
+  final int likesCount;
 
-  LikeError(this.message);
+  const InitializeLikeStateEvent({required this.isLiked, required this.likesCount});
+
+  @override
+  List<Object?> get props => [isLiked, likesCount];
 }

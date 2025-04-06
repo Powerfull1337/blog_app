@@ -21,33 +21,43 @@ class DetailsBlogPage extends StatefulWidget {
 }
 
 class _DetailsBlogPageState extends State<DetailsBlogPage> {
-  late bool isLiked;
-  late int likesCount;
+  late String userId;
 
   @override
   void initState() {
     super.initState();
-    isLiked = widget.isLiked;
-    likesCount = widget.likesCount;
+
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthSuccess) {
+      userId = authState.user.id;
+
+      /// Ініціалізуємо початковий стан для LikeBloc
+      context.read<LikeBloc>().add(
+            InitializeLikeStateEvent(
+              isLiked: widget.isLiked,
+              likesCount: widget.likesCount,
+            ),
+          );
+
+      /// Після цього отримуємо оновлену інфу з бекенду
+      context.read<LikeBloc>().add(
+            CheckIfBlogLikedEvent(blogId: widget.blog.id, userId: userId),
+          );
+      context.read<LikeBloc>().add(
+            GetLikesCountEvent(blogId: widget.blog.id),
+          );
+    }
   }
 
-  void toggleLike() {
-    final likeBloc = context.read<LikeBloc>();
-    final userState = context.read<AuthBloc>().state;
-
-    if (userState is AuthSuccess) {
-      final userId = userState.user.id;
-
-      setState(() {
-        isLiked = !isLiked;
-        likesCount = isLiked ? likesCount + 1 : likesCount - 1;
-      });
-
-      if (isLiked) {
-        likeBloc.add(LikeBlogEvent(blogId: widget.blog.id, userId: userId));
-      } else {
-        likeBloc.add(UnlikeBlogEvent(blogId: widget.blog.id, userId: userId));
-      }
+  void _onLikePressed(bool isLiked) {
+    if (isLiked) {
+      context.read<LikeBloc>().add(
+            UnlikeBlogEvent(blogId: widget.blog.id, userId: userId),
+          );
+    } else {
+      context.read<LikeBloc>().add(
+            LikeBlogEvent(blogId: widget.blog.id, userId: userId),
+          );
     }
   }
 
@@ -56,21 +66,28 @@ class _DetailsBlogPageState extends State<DetailsBlogPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: toggleLike,
-                icon: Icon(
-                  isLiked ? Icons.favorite : Icons.favorite_border,
-                  color: isLiked ? Colors.red : null,
-                ),
-              ),
-              Text(
-                likesCount.toString(),
-                style: const TextStyle(fontSize: 18),
-              ),
-              const SizedBox(width: 10),
-            ],
+          BlocBuilder<LikeBloc, LikeState>(
+            builder: (context, state) {
+              final isLiked = state.isLiked;
+              final likesCount = state.likesCount;
+
+              return Row(
+                children: [
+                  IconButton(
+                    onPressed: () => _onLikePressed(isLiked),
+                    icon: Icon(
+                      isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: isLiked ? Colors.red : null,
+                    ),
+                  ),
+                  Text(
+                    likesCount.toString(),
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(width: 10),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -102,9 +119,10 @@ class _DetailsBlogPageState extends State<DetailsBlogPage> {
             Text(
               widget.blog.content,
               style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
             ),
           ],
         ),

@@ -12,7 +12,7 @@ part 'blog_state.dart';
 class BlogBloc extends Bloc<BlogEvent, BlogState> {
   final UploadBlog _uploadBlog;
   final GetAllBlogsById _getAllBlogsById;
-  final GetCountBlog _getCountBlog;
+ // final GetCountBlog _getCountBlog;
 
   BlogBloc({
     required UploadBlog uploadBlog,
@@ -20,7 +20,7 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     required GetCountBlog getCountBlog,
   })  : _uploadBlog = uploadBlog,
         _getAllBlogsById = getAllBlogsById,
-        _getCountBlog = getCountBlog,
+      //  _getCountBlog = getCountBlog,
         super(BlogInitial()) {
     on<BlogUpload>(_onBlogUpload);
     on<BlogFetchAllBlogsById>(_onFetchAllBlogsById);

@@ -1,31 +1,50 @@
 part of 'like_bloc.dart';
 
-@immutable
-abstract class LikeEvent {}
+abstract class LikeEvent extends Equatable {
+  const LikeEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class LikeBlogEvent extends LikeEvent {
   final String blogId;
   final String userId;
 
-  LikeBlogEvent({required this.blogId, required this.userId});
+  const LikeBlogEvent({required this.blogId, required this.userId});
+
+  @override
+  List<Object?> get props => [blogId, userId];
 }
 
 class UnlikeBlogEvent extends LikeEvent {
   final String blogId;
   final String userId;
 
-  UnlikeBlogEvent({required this.blogId, required this.userId});
+  const UnlikeBlogEvent({required this.blogId, required this.userId});
+
+  @override
+  List<Object?> get props => [blogId, userId];
+}
+class ResetLikeStateEvent extends LikeEvent {
+  const ResetLikeStateEvent();
 }
 
-class FetchLikeCountEvent extends LikeEvent {
-  final String blogId;
-
-  FetchLikeCountEvent(this.blogId);
-}
-
-class FetchLikeInfo extends LikeEvent {
+class CheckIfBlogLikedEvent extends LikeEvent {
   final String blogId;
   final String userId;
 
-  FetchLikeInfo({required this.blogId, required this.userId});
+  const CheckIfBlogLikedEvent({required this.blogId, required this.userId});
+
+  @override
+  List<Object?> get props => [blogId, userId];
+}
+
+class GetLikesCountEvent extends LikeEvent {
+  final String blogId;
+
+  const GetLikesCountEvent({required this.blogId});
+
+  @override
+  List<Object?> get props => [blogId];
 }

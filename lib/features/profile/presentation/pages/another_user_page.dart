@@ -5,7 +5,6 @@ import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/features/auth/domain/entities/user.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
-import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/widgets/my_blog_card.dart';
 import 'package:flutter/material.dart';
@@ -193,37 +192,13 @@ class _AnotherUserPageState extends State<AnotherUserPage> {
 
                               return MyBlogCard(
                                 onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (context) {
-                                      context
-                                          .read<LikeBloc>()
-                                          .add(FetchLikeInfo(
-                                            blogId: blog.id,
-                                            userId: currentUserId,
-                                          ));
-                                      return BlocListener<LikeBloc, LikeState>(
-                                        listener: (context, likeState) {
-                                          if (likeState is LikeLoaded) {
-                                            Navigator.pop(context);
-                                            NavigationService.push(
-                                              context,
-                                              DetailsBlogPage(
-                                                blog: blog,
-                                                isLiked: likeState.isLiked,
-                                                likesCount: likeState.count,
-                                              ),
-                                            );
-                                          } else if (likeState is LikeError) {
-                                            Navigator.pop(context);
-                                            showSnackBar(
-                                                context, likeState.message);
-                                          }
-                                        },
-                                        child: const Center(child: Loader()),
-                                      );
-                                    },
+                                  NavigationService.push(
+                                    context,
+                                    DetailsBlogPage(
+                                      blog: blog,
+                                      isLiked: false,
+                                      likesCount: 0,
+                                    ),
                                   );
                                 },
                                 title: blog.title,

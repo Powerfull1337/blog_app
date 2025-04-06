@@ -228,10 +228,9 @@ void _initBlog() {
     )
     ..registerLazySingleton(
       () => LikeBloc(
-        unlikeBlog: serviceLocator(),
-        likeBlog: serviceLocator(),
-        getBlogLikes: serviceLocator(),
-        isBlogLiked: serviceLocator(),
-      ),
-    );
+          likeBlogUseCase: serviceLocator(),
+          unlikeBlogUseCase: serviceLocator(),
+          isBlogLikedUseCase: serviceLocator(),
+          getBlogLikesUseCase: serviceLocator(),
+    ));
 }

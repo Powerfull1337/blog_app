@@ -130,12 +130,12 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> isBlogLiked({required String blogId, required String userId}) async {
+  Future<Either<Failure, bool>> isBlogLikedByUser({required String blogId, required String userId}) async {
     try {
       if (!await (connectionChecker.isConnected)) {
         return left(Failure(MessageConstants.noInternetConnection));
       }
-      final isLiked = await blogRemoteDataSource.isBlogLiked(blogId, userId);
+      final isLiked = await blogRemoteDataSource.isBlogLikedByUser(blogId, userId);
       return right(isLiked);
     } on ServerException catch (e) {
       return left(Failure(e.toString()));
