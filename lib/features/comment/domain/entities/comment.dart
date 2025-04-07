@@ -4,8 +4,14 @@ class Comment {
   final String userId;
   final String content;
   final DateTime createdAt;
+  final DateTime? updatedAt;
+  final String? userName;
+  final String? userAvatar;
 
   Comment({
+    this.updatedAt,
+    this.userName,
+    this.userAvatar,
     required this.id,
     required this.blogId,
     required this.userId,

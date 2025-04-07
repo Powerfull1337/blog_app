@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:blog_app/features/blog/domain/entities/blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_all_blogs_by_id.dart';
-import 'package:blog_app/features/blog/domain/usecases/get_count_blog.dart';
+//import 'package:blog_app/features/blog/domain/usecases/get_count_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +17,7 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
   BlogBloc({
     required UploadBlog uploadBlog,
     required GetAllBlogsById getAllBlogsById,
-    required GetCountBlog getCountBlog,
+  //  required GetCountBlog getCountBlog,
   })  : _uploadBlog = uploadBlog,
         _getAllBlogsById = getAllBlogsById,
       //  _getCountBlog = getCountBlog,

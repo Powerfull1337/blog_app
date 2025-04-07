@@ -1,20 +1,18 @@
 import 'package:blog_app/features/comment/domain/entities/comment.dart';
 
-
 class CommentModel extends Comment {
-  final DateTime? updatedAt;
-  final String? userName;
-  final String? userAvatar;
 
-  CommentModel({
+
+  CommentModel( {
     required super.id,
     required super.blogId,
     required super.userId,
     required super.content,
     required super.createdAt,
-    this.updatedAt,
-    this.userName,
-    this.userAvatar,
+    super.updatedAt,
+    super.userName,
+    super.userAvatar,
+    
   });
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {

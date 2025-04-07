@@ -21,6 +21,12 @@ import 'package:blog_app/features/blog/domain/usecases/unlike_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
+import 'package:blog_app/features/comment/data/datasource/comment_remote_data_source.dart';
+import 'package:blog_app/features/comment/data/repositories/comment_repository_impl.dart';
+import 'package:blog_app/features/comment/domain/repositories/comment_repository.dart';
+import 'package:blog_app/features/comment/domain/usecases/get_all_comments_by_blog.dart';
+import 'package:blog_app/features/comment/domain/usecases/upload_comment.dart';
+import 'package:blog_app/features/comment/presentation/bloc/comments/comments_bloc.dart';
 import 'package:blog_app/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:blog_app/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:blog_app/features/profile/domain/repository/profile_repostitory.dart';
@@ -88,7 +94,7 @@ void _initAuth() {
 }
 
 void _initBlog() {
-  // Datasource
+  // -------Datasource--------------------
   serviceLocator
     ..registerFactory<BlogRemoteDataSource>(
       () => BlogRemoteDataSourceImpl(
@@ -105,7 +111,12 @@ void _initBlog() {
         serviceLocator<Database>(),
       ),
     )
-    // Repository
+    ..registerFactory<CommentRemoteDataSource>(
+      () => CommentRemoteDataSourceImpl(
+        serviceLocator(),
+      ),
+    )
+    // --------------Repository-------------------
     ..registerFactory<BlogRepository>(
       () => BlogRepositoryImpl(
         serviceLocator(),
@@ -119,8 +130,13 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory<CommentRepository>(
+      () => CommentRepositoryImpl(
+        serviceLocator(),
+      ),
+    )
 
-    // Usecases
+    //----------- Usecases-------------------
 
     // User
     ..registerFactory(
@@ -203,13 +219,25 @@ void _initBlog() {
       ),
     )
 
+    // Comment
+    ..registerFactory(
+      () => GetAllCommentByBlog(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => UploadComment(
+        serviceLocator(),
+      ),
+    )
+
     // Bloc
     ..registerLazySingleton(
       () => BlogBloc(
         uploadBlog: serviceLocator(),
         //    getAllBlogs: serviceLocator(),
         getAllBlogsById: serviceLocator(),
-        getCountBlog: serviceLocator(),
+        //   getCountBlog: serviceLocator(),
       ),
     )
     ..registerLazySingleton(
@@ -226,11 +254,14 @@ void _initBlog() {
         unSubscribeToUser: serviceLocator(),
       ),
     )
-    ..registerLazySingleton(
-      () => LikeBloc(
+    ..registerLazySingleton(() => LikeBloc(
           likeBlogUseCase: serviceLocator(),
           unlikeBlogUseCase: serviceLocator(),
           isBlogLikedUseCase: serviceLocator(),
           getBlogLikesUseCase: serviceLocator(),
-    ));
+        ))
+    ..registerLazySingleton(() => CommentsBloc(
+          getAllCommentByBlog: serviceLocator(),
+          uploadComment: serviceLocator(),
+        ));
 }
