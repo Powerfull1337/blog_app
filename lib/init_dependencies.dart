@@ -20,13 +20,18 @@ import 'package:blog_app/features/blog/domain/usecases/like_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/unlike_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
-import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
+import 'package:blog_app/features/blog/presentation/bloc/like_blog/like_blog_bloc.dart';
 import 'package:blog_app/features/comment/data/datasource/comment_remote_data_source.dart';
 import 'package:blog_app/features/comment/data/repositories/comment_repository_impl.dart';
 import 'package:blog_app/features/comment/domain/repositories/comment_repository.dart';
 import 'package:blog_app/features/comment/domain/usecases/get_all_comments_by_blog.dart';
+import 'package:blog_app/features/comment/domain/usecases/get_comment_blog_likes.dart';
+import 'package:blog_app/features/comment/domain/usecases/is_comment_liked_by_user.dart';
+import 'package:blog_app/features/comment/domain/usecases/like_comment.dart';
+import 'package:blog_app/features/comment/domain/usecases/unlike_comment.dart';
 import 'package:blog_app/features/comment/domain/usecases/upload_comment.dart';
 import 'package:blog_app/features/comment/presentation/bloc/comments/comments_bloc.dart';
+import 'package:blog_app/features/comment/presentation/bloc/like_comment/like_comment_bloc.dart';
 import 'package:blog_app/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:blog_app/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:blog_app/features/profile/domain/repository/profile_repostitory.dart';
@@ -230,6 +235,28 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => LikeComment(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => UnLikeComment(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetCommentBlogLikes(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => IsCommentBlogLikedByUser(
+        serviceLocator(),
+      ),
+    )
+
+
 
     // Bloc
     ..registerLazySingleton(
@@ -254,14 +281,20 @@ void _initBlog() {
         unSubscribeToUser: serviceLocator(),
       ),
     )
-    ..registerLazySingleton(() => LikeBloc(
+    ..registerLazySingleton(() => LikeBlogBloc(
           likeBlogUseCase: serviceLocator(),
           unlikeBlogUseCase: serviceLocator(),
           isBlogLikedUseCase: serviceLocator(),
           getBlogLikesUseCase: serviceLocator(),
         ))
-    ..registerLazySingleton(() => CommentsBloc(
+    ..registerLazySingleton(() => CommentBloc(
           getAllCommentByBlog: serviceLocator(),
           uploadComment: serviceLocator(),
+        ))
+    ..registerLazySingleton(() => LikeCommentBloc(
+          likeComment: serviceLocator(),
+          unLikeComment: serviceLocator(),
+          getCommentBlogLikes: serviceLocator(),
+          isCommentBlogLikedByUser: serviceLocator(),
         ));
 }

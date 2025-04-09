@@ -19,7 +19,7 @@ abstract class CommentRepository {
       {required String commentId, required String userId});
 
   Future<Either<Failure, bool>> isCommentLikedByUser(
-      String commentId, String userId);
+      {required String commentId, required String userId});
 
-  Future<Either<Failure, int>> getCommentLikesCount(String commentId);
+  Future<Either<Failure, int>> getCommentLikesCount({required String commentId});
 }

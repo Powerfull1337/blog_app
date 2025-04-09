@@ -1,4 +1,3 @@
-
 import 'package:blog_app/features/comment/domain/entities/comment.dart';
 import 'package:blog_app/features/comment/domain/usecases/get_all_comments_by_blog.dart';
 import 'package:blog_app/features/comment/domain/usecases/upload_comment.dart';
@@ -8,11 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'comments_event.dart';
 part 'comments_state.dart';
 
-class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
+class CommentBloc extends Bloc<CommentsEvent, CommentsState> {
   final GetAllCommentByBlog _getAllCommentByBlog;
   final UploadComment _uploadComment;
 
-  CommentsBloc({
+  CommentBloc({
     required GetAllCommentByBlog getAllCommentByBlog,
     required UploadComment uploadComment,
   })  : _getAllCommentByBlog = getAllCommentByBlog,

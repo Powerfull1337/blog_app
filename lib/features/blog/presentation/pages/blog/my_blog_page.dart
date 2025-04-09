@@ -4,7 +4,7 @@ import 'package:blog_app/core/utils/navigation_service.dart';
 import 'package:blog_app/core/utils/snackbar.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/blog/domain/entities/blog.dart';
-import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
+import 'package:blog_app/features/blog/presentation/bloc/like_blog/like_blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/add_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog/details_blog_page.dart';
 import 'package:blog_app/features/auth/presentation/widgets/loader.dart';
@@ -113,19 +113,21 @@ class _MyBlogPageState extends State<MyBlogPage> {
                       final userId = authState.user.id;
                       _resetLikeState();
 
-                      context.read<LikeBloc>().add(const ResetLikeStateEvent());
+                      context
+                          .read<LikeBlogBloc>()
+                          .add(const ResetLikeStateEvent());
 
-                      context.read<LikeBloc>().add(CheckIfBlogLikedEvent(
+                      context.read<LikeBlogBloc>().add(CheckIfBlogLikedEvent(
                           blogId: blog.id, userId: userId));
                       context
-                          .read<LikeBloc>()
+                          .read<LikeBlogBloc>()
                           .add(GetLikesCountEvent(blogId: blog.id));
 
                       showDialog(
                         context: context,
                         barrierDismissible: false,
                         builder: (context) {
-                          return BlocListener<LikeBloc, LikeState>(
+                          return BlocListener<LikeBlogBloc, LikeState>(
                             listener: (context, likeState) {
                               log("LikeBloc State updated: isLiked=${likeState.isLiked}, count=${likeState.likesCount}");
                               _handleLikeBlocListener(context, likeState, blog);

@@ -47,29 +47,55 @@ class CommentRepositoryImpl implements CommentRepository {
   }
 
   @override
-  Future<Either<Failure, int>> getCommentLikesCount(String commentId) {
-    // TODO: implement getCommentLikesCount
-    throw UnimplementedError();
+  Future<Either<Failure, void>> likeComment({
+    required String commentId,
+    required String userId,
+  }) async {
+    try {
+      await commentRemoteDataSource.likeComment(commentId, userId);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 
   @override
-  Future<Either<Failure, bool>> isCommentLikedByUser(
-      String commentId, String userId) {
-    // TODO: implement isCommentLikedByUser
-    throw UnimplementedError();
+  Future<Either<Failure, void>> unLikeComment({
+    required String commentId,
+    required String userId,
+  }) async {
+    try {
+      await commentRemoteDataSource.unlikeComment(commentId, userId);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 
   @override
-  Future<Either<Failure, void>> likeComment(
-      {required String commentId, required String userId}) {
-    // TODO: implement likeComment
-    throw UnimplementedError();
+  Future<Either<Failure, int>> getCommentLikesCount({
+    required String commentId,
+  }) async {
+    try {
+      final count =
+          await commentRemoteDataSource.getCommentLikesCount(commentId);
+      return right(count);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 
   @override
-  Future<Either<Failure, void>> unLikeComment(
-      {required String commentId, required String userId}) {
-    // TODO: implement unLikeComment
-    throw UnimplementedError();
+  Future<Either<Failure, bool>> isCommentLikedByUser({
+    required String commentId,
+    required String userId,
+  }) async {
+    try {
+      final isLiked =
+          await commentRemoteDataSource.isCommentLikedByUser(commentId, userId);
+      return right(isLiked);
+    } on ServerException catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 }

@@ -7,16 +7,16 @@ import 'package:blog_app/features/blog/domain/usecases/like_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/unlike_blog.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-part 'like_event.dart';
-part 'like_state.dart';
+part 'like_blog_event.dart';
+part 'like_blog_state.dart';
 
-class LikeBloc extends Bloc<LikeEvent, LikeState> {
+class LikeBlogBloc extends Bloc<LikeEvent, LikeState> {
   final LikeBlog likeBlogUseCase;
   final UnlikeBlog unlikeBlogUseCase;
   final IsBlogLiked isBlogLikedUseCase;
   final GetBlogLikes getBlogLikesUseCase;
 
-  LikeBloc({
+  LikeBlogBloc({
     required this.likeBlogUseCase,
     required this.unlikeBlogUseCase,
     required this.isBlogLikedUseCase,

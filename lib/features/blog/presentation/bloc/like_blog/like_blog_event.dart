@@ -1,4 +1,4 @@
-part of 'like_bloc.dart';
+part of 'like_blog_bloc.dart';
 
 abstract class LikeEvent extends Equatable {
   const LikeEvent();

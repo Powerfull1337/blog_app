@@ -3,8 +3,9 @@ import 'package:blog_app/core/common/pages/home_page.dart';
 import 'package:blog_app/core/theme/app_theme.dart';
 import 'package:blog_app/features/auth/presentation/pages/auth/login_page.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
-import 'package:blog_app/features/blog/presentation/bloc/like/like_bloc.dart';
+import 'package:blog_app/features/blog/presentation/bloc/like_blog/like_blog_bloc.dart';
 import 'package:blog_app/features/comment/presentation/bloc/comments/comments_bloc.dart';
+import 'package:blog_app/features/comment/presentation/bloc/like_comment/like_comment_bloc.dart';
 import 'package:blog_app/features/profile/presentation/bloc/follow/follow_bloc.dart';
 import 'package:blog_app/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:blog_app/init_dependencies.dart';
@@ -34,10 +35,13 @@ void main() async {
         create: (_) => serviceLocator<FollowBloc>(),
       ),
       BlocProvider(
-        create: (_) => serviceLocator<LikeBloc>(),
+        create: (_) => serviceLocator<LikeBlogBloc>(),
       ),
       BlocProvider(
-        create: (_) => serviceLocator<CommentsBloc>(),
+        create: (_) => serviceLocator<CommentBloc>(),
+      ),
+      BlocProvider(
+        create: (_) => serviceLocator<LikeCommentBloc>(),
       ),
     ],
     child: const MyApp(),
